@@ -1,160 +1,287 @@
-**Banking Specification**
+# Banking Complaint Resolution Agent Specification
 
-**Problem Statement:**
+## Problem Statement
 
-The system will help employees of the bank manage customer complaints and develop an appropriate response based on the complaint.
+The system will help bank employees manage customer complaints and develop appropriate responses based on verified complaint information, customer data, and approved banking policies.
 
-**Functional Requirements/Scope:**
+---
 
-1-Customer Complaints:
+# Functional Requirements (Scope)
 
-The system shall retrieve customer complaints and information.
+### FR-1: Customer Complaint Retrieval
+The system shall retrieve customer complaints and associated customer information.
 
-2-Fact Verification:
+### FR-2: Fact Verification
+The system shall distinguish verified operational facts from AI-generated content.
 
-The system should distinguish operational facts from the generated content.
+### FR-3: Evidence Retrieval
+The system shall retrieve complaint records, supporting documents, and relevant information from approved sources, including:
+- Mobile applications
+- Customer portals
+- Internal banking systems
+- Approved document repositories
 
-3-Evidecne Retrieval:
+### FR-4: Detailed Investigation Overview
+The system shall provide analysts with a detailed investigation view containing:
+- Customer information
+- Complaint details
+- Supporting evidence
+- Policy references
+- Investigation status
 
-The system should retrieve document/complaints from all the sources (mobile app, portal etc.).
+### FR-5: Escalation Recommendation
+The system shall identify conditions that require escalation according to business rules and regulatory requirements.
 
-4- Detailed Overview:
+### FR-6: Recommendation Generation
+The system shall generate draft recommendations using verified facts and approved policy evidence.
 
-The system should give a detailed overview of the analyst to review.
+---
 
-5-Escalation Recommendation:
+# Non-Goals
 
-The system should identify conditions that require escalation according to business rules and regulations.
+### NG-1: Automated Decision-Making
+The assistant shall not execute final financial compensation, refunds, fee reversals, or account adjustments without human review and approval.
 
-7-Recommendation:
+### NG-2: Direct Customer Communication
+The assistant shall not interact directly with customers or send external communications.
 
-The system should generate a draft recommendation using verified facts and policy evidence.
+### NG-3: Replacement of Core Banking Systems
+The assistant shall not replace core banking platforms, transaction processing systems, or systems of record.
 
-**Non-goals:**
+### NG-4: Use of Production Customer Data
+The system shall use only synthetic or approved training datasets during development and testing.
 
-1-Automated Decision-Making:
+### NG-5: Full Product-Line Coverage
+The initial implementation shall focus on complaint scenarios such as fee reviews and service-related complaints rather than all banking products.
 
-The assistant will not execute any final financial compensation, refunds, or account adjustments without review and approval by a human.
+---
 
-2-Direct customer-facing communication:
+# Actors
 
-The assistant will not interact directly with customers with any outward-facing communications; it should only act as an internal advisory tool for analysts.
+## Complaint Analyst
+**Responsibilities**
+- Investigate customer complaints
+- Review supporting evidence
+- Review policy guidance
+- Prepare recommendations
+- Escalate complaints when required
 
-3-Replacing the core banking transaction systems:
+## Supervisor / Reviewer
+**Responsibilities**
+- Review investigations
+- Approve recommendations
+- Reject recommendations
+- Request modifications
+- Approve escalations and final outcomes
 
-Cannot replace core systems, transaction processing, or serve as a permanent system of record for bank transactions.
+## Customer
+**Responsibilities**
+- Submit complaints
+- Receive final complaint responses
 
-4-No Use of Production or Real Customer Data:
+## Specialists
+**Responsibilities**
+- Review and resolve escalated complaints requiring specialized knowledge
 
-The system will only use synthetic datasets (customers, accounts, complaints, transactions, and service requests).
+---
 
-5\. No Exhaustive Product Line Scope:
+# Preconditions
 
-Implementation is scoped to specifically target complaint patterns such as fee-review processing.
+Before an investigation can begin:
 
-**Actors:**  
-<br/>1- Complaint Analyst – Investigates complaints and prepares recommendations
+- Only synthetic or approved training data is used.
+- A complaint must be submitted and recorded in the system.
+- Required complaint information must be available before investigation begins.
+- Missing information must be identified but never fabricated by AI.
+- Only authorized employees may access complaint information.
+- The AI assistant has restricted system access.
+- The AI assistant may use only approved banking policy documents.
+- All retrieved evidence must include source attribution.
+- Actions requiring supervisor approval must remain blocked until approval is recorded.
 
-2- Supervisor/Reviewer - Reviews and approves, rejects or requests changes
+---
 
-3- Customer – Submits complaints and receives the final response
+# Core Flows
 
-4- Specialists – Handle escalated issues requiring a specialized review  
-<br/>
+## 1. Case Initialization & Ingestion
+- Complaint is submitted.
+- Complaint record is created.
+- Required information is validated.
 
-**Preconditions:**
+## 2. Automated Triage & Policy Retrieval
+- Customer information is retrieved.
+- Complaint information is retrieved.
+- Relevant policies are retrieved.
+- Missing information is identified.
 
-Before the AI assistant can investigate a complaint:
+## 3. Analyst Review & Modification
+- Analyst reviews gathered evidence.
+- Analyst reviews AI-generated recommendations.
+- Analyst updates investigation details if required.
 
-- Only synthetic or approved training data is used in this project
-- A complaint must have been submitted and recorded in the system and all information must be provided before being investigated, missing information but be facts and not fabricated by the AI
-- Only authorized employees can access information or perform certain actions; the AI Assistant has limited access.
-- The AI Assistant must use approved banking policy documents and how where the information came from
-- Actions that require supervisor approval cannot happen until that approval has been recorded and verified.
+## 4. Human Review & Approval Gate
+- Reviewer evaluates findings.
+- Reviewer approves, rejects, modifies, or escalates the recommendation.
 
-**Core Flows:**
+## 5. Final Resolution & Audit Logging
+- Final decision is recorded.
+- Audit records are created.
+- Complaint case is closed.
 
-1\. Case Initialization & Ingestion
+---
 
-2\. Automated Triage & Policy Retrieval
+# Business Rules
 
-3\. Analyst Review & Modification
+### BR-1: Policy-Based Recommendations
+Recommendations shall be generated using approved banking policies.
 
-4\. Human Overview & Approval Gate
+### BR-2: Verified Facts Only
+Only verified operational facts shall be used as evidence.
 
-5\. Final Resolution & Audit Logging
+### BR-3: Evidence Attribution
+Every recommendation shall reference supporting facts and policy sources.
 
-**Business Rules:**
+### BR-4: Human Approval Required
+The system shall not make final complaint decisions.
 
-- The system should give recommendations based on business policy(s).
-- The system should retrieve verified facts only.
-- Every recommendation should mention the supporting facts and policy sources.
-- The system shall not make final complaint decisions.
-- A case cannot be closed until review is completed.
-- Certain complaints must be escalated automatically.
+### BR-5: Case Closure Validation
+A complaint case cannot be closed until review and approval are completed.
 
-**Error conditions:**
+### BR-6: Escalation Criteria
+Complaints meeting predefined escalation conditions shall be automatically flagged for review.
 
-- Customer data not found.
-- Complaint ID does not exist.
-- No policy documents can be retrieved.
-- Multiple systems provide contradictory information.
-- AI service fails while generating analysis.
-- Attempt to close case without reviewer approval.
+---
 
-**NFRs**
+# Error Conditions
 
-- Secure audit logging for every interaction, retrieved document reference, and analyst override.
-- The security & privacy of customer PII and financial data need to be handled in accordance with banking data privacy regulations.
-- The reliability of viewing core case management views needs to be accessible even after AI-generated services experience degradation.
+### EC-1: Customer Data Not Found
+Customer information cannot be located.
 
-**High-level interface expectations:**
+### EC-2: Complaint Not Found
+The provided complaint ID does not exist.
 
-- IE-1: The system shall provide a dashboard displaying complaint investigation details.
+### EC-3: Policy Retrieval Failure
+No applicable policy documents can be retrieved.
 
-Complaint ID
+### EC-4: Conflicting Information
+Multiple systems provide contradictory information.
 
-Customer Information
+### EC-5: AI Analysis Failure
+The AI service fails while generating recommendations or analysis.
 
-Complaint Status
+### EC-6: Missing Approval
+An attempt is made to close a case without reviewer approval.
 
-Investigation Progress
+---
 
-Assigned Analyst
+# Non-Functional Requirements (NFRs)
 
-- IE-2: Evidence Separation: The interface shall clearly separate information into four sections:
+## Security
+- Authentication shall be required for all users.
+- Authorization controls shall restrict access based on role.
+- Sensitive customer information shall be protected.
 
-Plain Text
+## Privacy
+- Customer PII and financial information shall be handled in accordance with banking privacy requirements.
+- Only authorized personnel may access complaint data.
 
-Verified Facts
+## Auditability
+- The system shall maintain audit logs for:
+  - User actions
+  - Retrieved documents
+  - Recommendations
+  - Analyst overrides
+  - Approval decisions
 
-Policy Evidence
+## Reliability
+- Core complaint-management functionality shall remain accessible if AI services become unavailable.
+- Investigation data shall remain available during service degradation.
 
-System Analysis
+---
 
-Human Decisions
+# High-Level Interface Expectations
 
-- IE-3: Investigation Workflow Guidance: The interface shall indicate the current step of the investigation process.
+## IE-1: Investigation Dashboard
 
-- IE-4: Missing Information Alerts: The interface shall prominently display missing or incomplete information.
+The system shall provide a dashboard displaying:
 
-- IE-5: Recommendation View: The interface shall display system-generated recommendations separately from human decisions.
-- IE-6: Review and Approval Controls: Reviewers shall be able to:
+- Complaint ID
+- Customer Information
+- Complaint Status
+- Investigation Progress
+- Assigned Analyst
 
-Approve recommendation
+---
 
-Reject recommendation
+## IE-2: Evidence Separation
 
-Modify recommendation
+The interface shall clearly separate information into the following sections:
 
-Request additional investigation
+### Verified Facts
+Information obtained directly from approved operational systems.
 
-- IE-7: Search and Case Retrieval: Users shall be able to search for cases using:
+### Policy Evidence
+Information retrieved from approved policy repositories.
 
-Complaint ID
+### System Analysis
+AI-generated assessments, findings, and recommendations.
 
-Customer ID
+### Human Decisions
+Actions and decisions made by analysts and reviewers.
 
-Case Status
+---
 
-Date Range
+## IE-3: Investigation Workflow Guidance
+
+The interface shall display the current investigation stage, including:
+
+- Intake
+- Investigation
+- Policy Review
+- Recommendation
+- Approval
+- Closure
+
+---
+
+## IE-4: Missing Information Alerts
+
+The interface shall prominently display missing or incomplete information that may prevent investigation completion.
+
+---
+
+## IE-5: Recommendation View
+
+The interface shall display AI-generated recommendations separately from human decisions and approvals.
+
+---
+
+## IE-6: Review & Approval Controls
+
+Reviewers shall be able to:
+
+- Approve recommendations
+- Reject recommendations
+- Modify recommendations
+- Request additional investigation
+
+---
+
+## IE-7: Search & Case Retrieval
+
+Users shall be able to search for cases using:
+
+- Complaint ID
+- Customer ID
+- Case Status
+- Date Range
+
+---
+
+# Success Criteria
+
+- Every recommendation includes supporting evidence.
+- Every complaint resolution receives human approval before closure.
+- All actions are recorded in audit logs.
+- Policy evidence is available for investigation review.
+- Verified facts, policy evidence, system analysis, and human decisions remain clearly separated throughout the investigation process.
