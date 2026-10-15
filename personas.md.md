@@ -1,86 +1,136 @@
-**Persona's**
+# Personas
 
-**Persona 1: Complaint Analyst**
+## Persona 1: Complaint Analyst
 
-**Responsibilities**
+### Responsibilities
 
 - Receive and investigate customer complaints.
-- Review account and transaction history.
-- Identify relevant policies.
+- Review customer account and transaction history.
+- Identify and assess relevant policies.
 - Evaluate AI-generated recommendations.
 - Escalate cases when required.
 
-**Goals**
+### Goals
 
 - Resolve complaints accurately and efficiently.
-- Ensure recommendations comply with bank policy.
-- Maintain complete evidence for review.
+- Ensure recommendations comply with bank policies and regulations.
+- Maintain complete and traceable evidence for review.
+- Reduce investigation time while maintaining quality.
 
-**Tasks**
+### Tasks
 
 - Search customer and complaint records.
-- Review supporting evidence.
-- Review policy guidance.
-- Submit case for approval.
+- Review supporting evidence and documents.
+- Review applicable policy guidance.
+- Validate retrieved information.
+- Review and adjust AI-generated recommendations.
+- Submit completed investigations for approval.
 
-**Information Needs**
+### Information Needs
 
-- Complaint details.
-- Customer information.
-- Account and transaction history.
-- Applicable policy excerpts.
-- Investigation status.
-- AI recommendation rationale.
+- Complaint details
+- Customer information
+- Account and transaction history
+- Applicable policy excerpts
+- Investigation status
+- AI recommendation rationale
+- Escalation criteria and requirements
 
-**Permissions**
+### Permissions
 
-- View complaint records.
-- View customer records.
-- View policy evidence.
+- View complaint records
+- View customer records
+- View transaction and account history
+- View policy evidence
+- Create and update investigation notes
+- Submit cases for review
 
-**Constraints**
+### Constraints
 
+- Cannot approve refunds, fee reversals, or compensation decisions.
 - Cannot close complaints requiring reviewer approval.
-- Must provide evidence supporting recommendations.
+- Must provide supporting evidence for recommendations.
+- Must use approved policy sources during investigations.
 
-**Persona 2: Supervisor / Reviewer**
+---
 
-**Responsibilities**
+## Persona 2: Supervisor / Reviewer
 
-- Review of complaint investigations.
+### Responsibilities
+
+- Review complaint investigations.
 - Approve or reject recommendations.
 - Review escalated cases.
-- Ensure compliance with bank policy.
+- Ensure compliance with bank policies and regulations.
+- Provide final approval for complaint resolutions.
 
-**Goals**
+### Goals
 
-- Ensure complaint outcomes are correct and compliant.
-- Verify evidence supports recommendations.
+- Ensure complaint outcomes are accurate, fair, and compliant.
+- Verify that evidence supports all recommendations.
+- Minimize compliance and regulatory risk.
+- Maintain consistency in complaint-handling decisions.
 
-**Tasks**
+### Tasks
 
-- Review facts and evidence.
-- Review AI-generated analysis.
+- Review verified facts and evidence.
+- Review AI-generated analysis and recommendations.
 - Approve or reject recommendations.
-- Request additional investigation.
+- Request additional investigation when required.
 - Approve escalation outcomes.
+- Review audit trails and investigation history.
+- Justify overrides of analyst or AI recommendations.
 
-**Information Needs**
+### Information Needs
 
-- Verified facts.
-- Policy evidence.
-- Investigation summary.
+- Verified facts
+- Policy evidence
+- Investigation summary
+- Analyst notes
+- AI recommendation rationale
+- Audit history
+- Escalation details
 
-**Permissions**
+### Permissions
 
-- View all assigned complaint cases.
-- Approve decisions.
-- Reject decisions.
-- Escalate complaints.
-- View audit records.
+- View all assigned complaint cases
+- View investigation details and supporting evidence
+- Approve recommendations
+- Reject recommendations
+- Modify recommendations
+- Escalate complaints
+- View audit records
+- Close approved complaint cases
 
-**Constraints**
+### Constraints
 
-- Must justify overrides.
-- Must review evidence before approval.
-- Responsible for final decision.
+- Must justify recommendation overrides.
+- Must review evidence before making a decision.
+- Responsible for final complaint outcome.
+- Cannot approve decisions without sufficient supporting evidence.
+- Must comply with regulatory and policy requirements.
+
+---
+
+# Persona Summary
+
+| Persona | Primary Responsibility | Key Decision Authority |
+|----------|------------------------|-------------------------|
+| Complaint Analyst | Investigate complaints and prepare recommendations | Can recommend and escalate cases |
+| Supervisor / Reviewer | Review and approve complaint outcomes | Final approval and closure authority |
+
+# Relationship Between Personas
+
+### Complaint Analyst
+- Conducts investigations.
+- Collects and evaluates evidence.
+- Reviews AI-assisted recommendations.
+- Prepares proposed resolutions.
+
+### Supervisor / Reviewer
+- Validates investigation quality.
+- Reviews evidence and recommendations.
+- Makes final complaint decisions.
+- Approves, rejects, modifies, or escalates cases.
+
+This separation ensures that AI and analysts support the investigation process while final complaint outcomes remain under authorized human control.
