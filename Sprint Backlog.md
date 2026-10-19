@@ -1,166 +1,208 @@
-# **Sprint Backlog** 
+# Sprint Backlog
 
-# **US-001** 
+---
 
-**As a consultant, I want to understand the complaint-resolution business problem so that I can explain the users, pain points, constraints, and success measures.** 
+# US-001: Understand the Complaint-Resolution Business Problem
 
-# **Task 1: Identify Stakeholders** 
+**User Story**
 
-**Description** Document all users and stakeholders involved in complaint handling. 
+> As a consultant, I want to understand the complaint-resolution business problem so that I can explain the users, pain points, constraints, and success measures.
 
-# **Acceptance Criteria** 
+---
 
-- List of primary and secondary stakeholders created 
+## Task 1: Identify Stakeholders
 
-- Roles and responsibilities documented 
+### Description
+Document all users and stakeholders involved in complaint handling.
 
-- Decision makers identified 
+### Acceptance Criteria
+- [ ] List of primary and secondary stakeholders created
+- [ ] Roles and responsibilities documented
+- [ ] Decision makers identified
 
-# **Task 2: Map Current Complaint Resolution Process** 
+---
 
-**Description** Create an as-is workflow from complaint intake through resolution. 
+## Task 2: Map Current Complaint Resolution Process
 
-# **Acceptance Criteria** 
+### Description
+Create an as-is workflow from complaint intake through resolution.
 
-- End-to-end process documented 
+### Acceptance Criteria
+- [ ] End-to-end process documented
+- [ ] Inputs, outputs, and handoffs identified
+- [ ] Manual and automated steps highlighted
 
-- Inputs, outputs, and handoffs identified 
+---
 
-- Manual and automated steps highlighted 
+## Task 3: Capture Business Pain Points
 
-# **Task 3: Capture Business Pain Points** 
+### Description
+Analyze inefficiencies and challenges in the current process.
 
-**Description** Analyze inefficiencies and challenges in the current process. 
+### Acceptance Criteria
+- [ ] Pain points documented
+- [ ] Impact on users and business described
+- [ ] Root causes identified where possible
 
-# **Acceptance Criteria** 
+---
 
-- Pain points documented 
+## Task 4: Identify Constraints and Business Rules
 
-- Impact on users and business described 
+### Description
+Document operational, compliance, and technical constraints.
 
-- Root causes identified where possible 
+### Acceptance Criteria
+- [ ] Business rules recorded
+- [ ] Regulatory requirements captured
+- [ ] Technical limitations identified
 
-# **Task 4: Identify Constraints and Business Rules** 
+---
 
-**Description** Document operational, compliance, and technical constraints. 
+## Task 5: Define Success Metrics
 
-# **Acceptance Criteria** 
+### Description
+Establish measurable outcomes for the solution.
 
-- Business rules recorded 
+### Acceptance Criteria
+- [ ] KPIs documented
+- [ ] Current baseline metrics captured (if available)
+- [ ] Target outcomes defined
 
-- Regulatory requirements captured 
+---
 
-- Technical limitations identified 
+## Task 6: Produce Business Problem Summary
 
-# **Task 5: Define Success Metrics** 
+### Description
+Create a concise overview for project stakeholders.
 
-**Description** Establish measurable outcomes for the solution. 
+### Acceptance Criteria
+- [ ] Users identified
+- [ ] Pain points summarized
+- [ ] Constraints documented
+- [ ] Success measures included
 
-# **Acceptance Criteria** 
+---
 
-- KPIs documented 
+# US-002: Define Complaint-Intake Stories
 
-- Current baseline metrics captured (if available) 
+**User Story**
 
-- Target outcomes defined 
+> As a business analyst, I want to define complaint-intake stories so that the team can implement against clear acceptance criteria.
 
-# **Task 6: Produce Business Problem Summary** 
+---
 
-**Description** Create a concise overview for project stakeholders. 
+## Task 1: Identify Complaint Intake Actors
 
-# **Acceptance Criteria** 
+### Description
+Determine who submits, reviews, and manages complaints.
 
-- Users identified 
+### Acceptance Criteria
+- [ ] User personas documented
+- [ ] Actor responsibilities defined
 
-- Pain points summarized 
+---
 
-- Constraints documented 
+## Task 2: Define Complaint Intake Flow
 
-- Success measures included 
+### Description
+Document how complaints enter the system.
 
-# **US-002** 
+### Acceptance Criteria
+- [ ] Workflow diagram created
+- [ ] Required steps identified
+- [ ] Alternative paths documented
 
-**As a business analyst, I want to define complaint-intake stories so that the team can implement against clear acceptance criteria.** 
+---
 
-# **Task 1: Identify Complaint Intake Actors** 
+## Task 3: Define Complaint Data Requirements
 
-**Description** Determine who submits, reviews, and manages complaints. 
+### Description
+Specify information required during intake.
 
-# **Acceptance Criteria** 
+### Acceptance Criteria
+- [ ] Mandatory fields identified
+- [ ] Optional fields identified
+- [ ] Validation rules documented
 
-- User personas documented 
+---
 
-- Actor responsibilities defined 
+## Task 4: Define Business Rules
 
-# **Task 2: Define Complaint Intake Flow** 
+### Description
+Capture rules governing complaint submission.
 
-**Description** Document how complaints enter the system. 
+### Acceptance Criteria
+- [ ] Rules documented
+- [ ] Exceptions identified
+- [ ] Priority and routing conditions defined
 
-# **Acceptance Criteria** 
+---
 
-- Workflow diagram created 
+## Task 5: Write Complaint Intake User Stories
 
-- Required steps identified 
+### Description
+Create implementation-ready user stories.
 
-- Alternative paths documented 
+### Acceptance Criteria
+- [ ] Stories follow Given/When/Then format
+- [ ] Business value clearly stated
+- [ ] Stories are testable
 
-# **Task 3: Define Complaint Data Requirements** 
+---
 
-**Description** Specify information required during intake. 
+## Task 6: Create Acceptance Criteria
 
-# **Acceptance Criteria** 
+### Description
+Define measurable acceptance criteria for each story.
 
-- Mandatory fields identified 
+### Acceptance Criteria
+- [ ] Functional criteria defined
+- [ ] Error scenarios included
+- [ ] Validation scenarios included
 
-- Optional fields identified 
+---
 
-- Validation rules documented 
+## Task 7: Review with BA, QA, and Engineering
 
-# **Task 4: Define Business Rules** 
+### Description
+Validate completeness and implementation readiness.
 
-**Description** Capture rules governing complaint submission. 
+### Acceptance Criteria
+- [ ] Feedback addressed
+- [ ] Dependencies documented
+- [ ] Stories approved for development
 
-# **Acceptance Criteria** 
+---
 
-- Rules documented 
+# Sprint Deliverables
 
-- Exceptions identified 
+### US-001 Deliverables
+- Stakeholder Analysis
+- Current-State Process Map
+- Pain Point Assessment
+- Business Rules Register
+- Success Metrics Definition
+- Business Problem Summary
 
-- Priority and routing conditions defined 
+### US-002 Deliverables
+- Complaint Intake Workflow
+- Intake Data Dictionary
+- Business Rules Catalog
+- Complaint Intake User Stories
+- Acceptance Criteria Set
+- BA/QA/Engineering Review Sign-off
 
-# **Task 5: Write Complaint Intake User Stories** 
+---
 
-**Description** Create implementation-ready user stories. 
+# Definition of Done
 
-# **Acceptance Criteria** 
+A story is considered complete when:
 
-- Stories follow Given/When/Then format 
-
-- Business value clearly stated 
-
-- Stories are testable 
-
-# **Task 6: Create Acceptance Criteria** 
-
-**Description** Define measurable acceptance criteria for each story. 
-
-# **Acceptance Criteria** 
-
-- Functional criteria defined 
-
-- Error scenarios included 
-
-- Validation scenarios included 
-
-# **Task 7: Review with BA, QA, and Engineering** 
-
-**Description** Validate completeness and implementation readiness. 
-
-# **Acceptance Criteria** 
-
-- Feedback addressed 
-
-- Dependencies documented 
-
-- Stories approved for development 
-
+- Requirements are documented and reviewed
+- Acceptance criteria are testable and approved
+- Business rules are linked to the story
+- Dependencies are identified
+- QA scenarios are defined
+- Stakeholders have reviewed the output
+- Story is ready for implementation
+```**
