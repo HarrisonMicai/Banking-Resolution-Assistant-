@@ -1,0 +1,8 @@
+query_name,complaint_id,customer_id,category,priority,status,received_at,account_id,current_balance,employee_id,analyst_name,total_complaints_handled,review_request_id,recommendation_id,reviewer_name,requested_at
+Q5_PendingReviews,CMP001,REC001,,,,,,,,,,RR001,CMP001,REC001,Michael Brown,2026-10-20 19:54:46
+Q5_PendingReviews,CMP003,REC003,,,,,,,,,,RR003,CMP003,REC003,Michael Brown,2026-10-20 19:54:46
+Q5_PendingReviews,CMP004,REC004,,,,,,,,,,RR004,CMP004,REC004,Olivia White,2026-10-20 19:54:46
+Q5_PendingReviews,CMP006,REC006,,,,,,,,,,RR006,CMP006,REC006,Michael Brown,2026-10-20 19:54:46
+Q5_PendingReviews,CMP007,REC007,,,,,,,,,,RR007,CMP007,REC007,Olivia White,2026-10-20 19:54:46
+Q5_PendingReviews,CMP009,REC009,,,,,,,,,,RR009,CMP009,REC009,Michael Brown,2026-10-20 19:54:46
+Q5_PendingReviews,CMP010,REC010,,,,,,,,,,RR010,CMP010,REC010,Olivia White,2026-10-20 19:54:46

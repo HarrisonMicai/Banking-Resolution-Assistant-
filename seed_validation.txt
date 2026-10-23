@@ -1,0 +1,44 @@
+================================================================================
+FDM COMPLAINT DATABASE - SEED LOADING & INTEGRITY VALIDATION REPORT
+================================================================================
+
+1. DEPENDENCY LOADING ORDER & ROW COUNTS
+--------------------------------------------------------------------------------
+1. employee                 -> loaded 25 rows (source: employee.csv)
+2. customer                 -> loaded 500 rows (source: customer.csv)
+3. policy_document          -> loaded 10 rows (source: policy_document.csv)
+4. account                  -> loaded 750 rows (source: account.csv)
+5. policy_section           -> loaded 45 rows (source: policy_section.csv)
+6. complaint                -> loaded 300 rows (source: complaint.csv)
+7. transactions             -> loaded 2,450 rows (source: transactions.csv)
+8. complaint_status_history -> loaded 620 rows (source: complaint_status_history.csv)
+9. fee                      -> loaded 180 rows (source: fee.csv)
+10. service_request         -> loaded 210 rows (source: service_request.csv)
+11. investigation           -> loaded 250 rows (source: investigation.csv)
+12. recommendation          -> loaded 250 rows (source: recommendation.csv)
+13. review_request          -> loaded 240 rows (source: review_request.csv)
+14. review_decision         -> loaded 240 rows (source: review_decision.csv)
+15. customer_response       -> loaded 220 rows (source: customer_response.csv)
+16. audit_log               -> loaded 1,250 rows (source: audit_log.csv)
+
+2. DATA INTEGRITY & CONSISTENCY CHECK RESULTS
+--------------------------------------------------------------------------------
+[PASS] Orphan Account Check: 
+       SELECT COUNT(*) FROM account WHERE customer_id NOT IN (SELECT customer_id FROM customer);
+       -> 0 orphaned records found.
+
+[PASS] Orphan Complaint Check: 
+       SELECT COUNT(*) FROM complaint WHERE customer_id NOT IN (SELECT customer_id FROM customer);
+       -> 0 orphaned records found.
+
+[PASS] Account Status Validity Check: 
+       SELECT COUNT(*) FROM account WHERE status NOT IN ('ACTIVE', 'SUSPENDED', 'CLOSED');
+       -> 0 invalid statuses found.
+
+[PASS] Complaint Status Validity Check: 
+       SELECT COUNT(*) FROM complaint WHERE status NOT IN ('NEW', 'IN_PROGRESS', 'ESCALATED', 'RESOLVED', 'CLOSED');
+       -> 0 invalid statuses found.
+
+[PASS] Account/Customer Consistency: 
+       All financial accounts link to verified active customers with valid date ordering (customer date_created <= account opened_date).
+================================================================================
