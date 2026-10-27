@@ -1,7 +1,0 @@
-Column1,Column2,Column3,Column4,Column5
-id,QUESTION,Classification,Reason,Missing_Context
-1,How many open complaints does customer C0001 have?,SQL,This requires an exact aggregate count of records matching the customer ID and open status from structured relational database tables.,None
-2,What is the escalation rule for a disputed card transaction?,RAG,This requires semantic search and text retrieval across unstructured policy documents and rules repositories.,None
-3,Show customer history and explain the fee policy.,Hybrid,This requires structured operational data for the customer history combined with unstructured policy text for the fee guidelines.,Specific fee type or transaction ID
-4,What is average closure time by category?,SQL,This requires an aggregate mathematical computation over structured date fields and status columns in the database.,None
-5,Should this high-risk case be approved automatically?,Human Decision,"Per non-goal NG-1 and business rule BR-4, financial and high-risk case approvals require mandatory human review and cannot be automated",Specific risk assessment scores and transaction details
