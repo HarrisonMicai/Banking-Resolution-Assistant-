@@ -6,8 +6,15 @@
 
 **US-001:1: Subtasks:** Define core business problem statement
 
-- Document why a customer files complaints, such as billing errors, delayed transfers, unauthorized transactions, and poor customer service
-  -
+- Document why a customer files complaints, such as billing errors, delayed transfers, unauthorized transactions, and poor customer service.
+- **Acceptance Criteria:**
+  - The problem statement describes the complaint-resolution problem, its impact on customers and bank staff, and the intended outcome of improving the process.
+  - The discovery document identifies the customer, complaint analyst, and supervisor/reviewer, and summarizes each role's goals and responsibilities.
+  - At least four representative complaint reasons are documented, including billing errors, delayed transfers, unauthorized transactions, and poor customer service.
+  - The current complaint journey documents intake, investigation, evidence and policy review, recommendation, human approval, customer response, and case closure; each step has an assigned role or is explicitly marked as needing confirmation.
+  - At least three current-process pain points are documented and linked to the journey steps they affect.
+  - Constraints are documented, including the use of synthetic or approved training data, approved policy sources, and required human approval for final decisions.
+  - Success measures are stated in observable terms, with a baseline and target or a named owner and method for establishing them before implementation.
 
 **US-002 Description:** As a business analyst, I want to define complaint-intake stories so that the team can implement against clear acceptance criteria.
 
