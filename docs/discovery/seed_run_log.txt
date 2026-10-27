@@ -1,0 +1,10 @@
+2026-10-27 19:16:00,105 [INFO] Executing schema from database_schema.sql...
+2026-10-27 19:16:00,120 [INFO] Database schema initialized successfully.
+2026-10-27 19:16:00,121 [INFO] Starting validation and loading process within transaction...
+2026-10-27 19:16:00,135 [INFO] Processing customers: 100 rows found.
+2026-10-27 19:16:00,178 [INFO] Processing accounts: 250 rows found.
+2026-10-27 19:16:00,240 [INFO] Processing complaints: 150 rows found.
+2026-10-27 19:16:00,295 [INFO] Processing service requests: 80 rows found.
+2026-10-27 19:16:00,312 [INFO] Data successfully loaded and committed.
+2026-10-27 19:16:00,320 [INFO] Integrity report written to integrity_report.txt.
+2026-10-27 19:16:00,321 [INFO] Database initialization and seeding completed successfully!
