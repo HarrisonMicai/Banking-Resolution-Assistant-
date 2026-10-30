@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+
 from enum import Enum
+# a set of symbolic names bound to unique, constant values (enumeration)
 from typing import List, Optional
 
 class ComplaintCategory(Enum):
