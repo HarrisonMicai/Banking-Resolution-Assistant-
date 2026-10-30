@@ -50,7 +50,7 @@ def analyze_complaints(df):
     
     return category_counts, category_pct, resolution_summary
 
-if __name__ == "__main__":
+def main():
     file_name = "complaints.csv"
     df = load_and_validate(file_name)
     cat_counts, cat_pct, res_summary = analyze_complaints(df)
@@ -63,3 +63,6 @@ if __name__ == "__main__":
     })
     output_df.to_csv("complaint_analysis_output.csv", index=False)
     print("Analysis complete. Output exported to complaint_analysis_output.csv")
+
+if __name__ == "__main__":
+    main()

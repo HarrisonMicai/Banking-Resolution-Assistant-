@@ -1,6 +1,6 @@
 from datetime import datetime
 import pytest
-from models import (
+from app.models import (
     Account,
     Complaint,
     ComplaintCategory,

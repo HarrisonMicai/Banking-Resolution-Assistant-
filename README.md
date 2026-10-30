@@ -1,72 +1,42 @@
-# Banking-Resolution-Assistant-
+# Banking Resolution Assistant
 
-Initial project structure:
+## Application structure
 
-spec/ — requirements and specifications
+Application code lives in the `app/` Python package:
 
-docs/ — project documentation
+```text
+app/
+├── api/           # HTTP routes and API wiring
+├── core/          # Shared configuration and infrastructure
+├── models/        # Domain models
+├── repositories/  # Database access
+├── schemas/       # API request and response schemas
+└── services/      # Business logic and complaint analysis
+```
 
-data/ — datasets and data-related assets
+The `api/` and `schemas/` packages are ready for future API code.
 
-src/ — application source code
+## Complaint analysis
 
-tests/ — automated tests
+Run the existing command from the repository root with
+`python complaint_analysis.py`. Its implementation is in
+`app/services/complaint_analysis.py`. It reads `complaints.csv` and writes
+`complaint_analysis_output.csv` in the current working directory.
 
-Add language- and framework-specific setup as the implementation stack is chosen.
+## Data access
 
-# Python
-pycache/ *.py[cod] *.pyo *.pyd *.egg-info/ venv/ .venv/ env/
+`app/core/database_manager.py` manages SQLite connections and transactions.
+Repositories in `app/repositories/` own database queries and use parameterized
+SQL. Set `DB_NAME` in the environment to select a database file; the default is
+`BankCRS.db`.
 
-# Node
-node_modules/ npm-debug.log* yarn-debug.log* yarn-error.log*
-
-# Environment Variables
-.env .env.local .env.*.local
-
-# Databases
-*.db *.sqlite *.sqlite3
-
-# Logs
-logs/ *.log
-
-# IDE
-.vscode/ .idea/ *.iml
-
-# OS
-.DS_Store Thumbs.db
-
-# Build
-dist/ build/ coverage/
-
-# Testing
-.pytest_cache/ .coverage
-
-Misc
-*.swp *.swo
-
-
-## Data Access Layer & Repositories
-
-### Configuration
-The data layer relies on configuration variables defined via environment files (see `environment_example.txt`). Ensure your local environment maps parameters correctly:
-- `DB_NAME`: Target database filename or connection target.
-
-### Responsibilities
-- **DatabaseManager (`src/data/database_manager.py`)**: Handles the database connection lifecycle and provides transactional context managers (`transaction()`) that handle automated commits and rollbacks on errors.
-- **Repositories (`src/data/*_repository.py`)**: Encapsulate persistence logic, querying, and object mapping for entities like Customers, Accounts, and Complaints.
-
-### Where SQL is Allowed and Prohibited
-- **Allowed:** Exclusively inside designated repository files (`src/data/`). Repositories are the single source of truth for handling queries and raw database commands.
-- **Prohibited:** Raw SQL statements are strictly prohibited inside business workflow logic, UI layers, API route handlers, or agent tool wrappers. All database interaction must flow through repository methods using **parameterized queries** to protect against SQL injection vulnerabilities.
-
-### Example Call
 ```python
-from src.data.database_manager import DatabaseManager
-from src.data.customer_repository import CustomerRepository
+from app.core.database_manager import DatabaseManager
+from app.repositories.customer_repository import CustomerRepository
 
 db_manager = DatabaseManager()
 customer_repo = CustomerRepository(db_manager)
 
-# Fetch customer record safely
 customer = customer_repo.get_by_id("CUST-12345")
 print(customer)
+```

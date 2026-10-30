@@ -1,9 +1,9 @@
 # tests/test_repositories.py
 import pytest
 import sqlite3
-from src.data.database_manager import DatabaseManager
-from src.data.customer_repository import CustomerRepository
-from src.data.complaint_repository import ComplaintRepository
+from app.core.database_manager import DatabaseManager
+from app.repositories.customer_repository import CustomerRepository
+from app.repositories.complaint_repository import ComplaintRepository
 
 @pytest.fixture
 def db_manager(tmp_path):
