@@ -1,47 +1,30 @@
+from sqlalchemy.orm import Session
+from app.models.complaint import Complaint, ComplaintStatus
+
 class ComplaintRepository:
-    def __init__(self, db_manager):
-        self.db_manager = db_manager
+    def get_by_id(self, db: Session, complaint_id: int):
+        return db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
 
-    def get_by_id(self, complaint_id: str):
-        with self.db_manager.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM complaint WHERE complaint_id = ?", 
-                (complaint_id,)
-            )
-            row = cursor.fetchone()
-            return dict(row) if row else None
+    def get_for_customer(self, db: Session, customer_id: int):
+        return db.query(Complaint).filter(Complaint.customer_id == customer_id).all()
 
-    def get_for_customer(self, customer_id: str):
-        with self.db_manager.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM complaint WHERE customer_id = ?", 
-                (customer_id,)
-            )
-            rows = cursor.fetchall()
-            return [dict(row) for row in rows]
+    def create(self, db: Session, complaint_data):
+        complaint = Complaint(
+            customer_id=complaint_data.customer_id,
+            account_id=complaint_data.account_id,
+            category=complaint_data.category,
+            priority=complaint_data.priority,
+            description=complaint_data.description,
+            status=ComplaintStatus.SUBMITTED
+        )
+        db.add(complaint)
+        db.commit()
+        db.refresh(complaint)
+        return complaint
 
-    def create(self, complaint_data: dict):
-        with self.db_manager.transaction() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                INSERT INTO complaint (
-                    complaint_id, customer_id, account_id, channel, 
-                    category, complaint_text, priority, status, received_at, assigned_analyst_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    complaint_data.get("complaint_id"),
-                    complaint_data.get("customer_id"),
-                    complaint_data.get("account_id"),
-                    complaint_data.get("channel"),
-                    complaint_data.get("category"),
-                    complaint_data.get("complaint_text"),
-                    complaint_data.get("priority"),
-                    complaint_data.get("status"),
-                    complaint_data.get("received_at"),
-                    complaint_data.get("assigned_analyst_id")
-                )
-            )
+    def update_status(self, db: Session, complaint: Complaint, new_status: ComplaintStatus, event_id: int, notes: str = None):
+        # Utilizes domain model business logic method for status transition
+        complaint.transition_status(new_status, event_id=event_id, notes=notes)
+        db.commit()
+        db.refresh(complaint)
+        return complaint
