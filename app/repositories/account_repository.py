@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.account import Account
+from app.models.models import Account
 
 class AccountRepository:
     def create(self, db: Session, account_data):

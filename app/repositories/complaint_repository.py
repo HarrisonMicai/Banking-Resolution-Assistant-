@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.complaint import Complaint, ComplaintStatus
+from app.models.models import Complaint, ComplaintStatus
 
 class ComplaintRepository:
     def get_by_id(self, db: Session, complaint_id: int):

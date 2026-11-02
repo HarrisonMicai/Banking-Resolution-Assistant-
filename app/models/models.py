@@ -88,7 +88,7 @@ class Account(Base):
 
     # Relationships
     customer = relationship("Customer", back_populates="accounts")
-    complaints = relationship("Complaint", back_populates="accounts")
+    complaints = relationship("Complaint", back_populates="account")
 
 
 # -------------------------
@@ -122,7 +122,7 @@ class Complaint(Base):
 
     # Relationships
     customer = relationship("Customer", back_populates="complaints")
-    account = relationship("Account", back_populates="accounts")
+    account = relationship("Account", back_populates="complaints")
 
     status_history = relationship(
         "ComplaintStatusEvent",
@@ -198,4 +198,3 @@ class ComplaintStatusEvent(Base):
         "Complaint",
         back_populates="status_history"
     )
-
