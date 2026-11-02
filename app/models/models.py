@@ -1,18 +1,18 @@
 
-from datetime import datetime, timezone
-from decimal import Decimal
-from enum import Enum
-from typing import List, Optional
 from sqlalchemy import (
-    String,
+    Column,
     Integer,
+    String,
+    Float,
     DateTime,
     ForeignKey,
     Enum as SQLAlchemyEnum,
-    Numeric,
-    Text,
+    Text
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import relationship
+from datetime import datetime
+from enum import Enum
+from typing import Optional
 
 from app.database.base import Base
 
@@ -58,140 +58,86 @@ class ComplaintStatus(Enum):
 
 
 # -------------------------
-# CUSTOMER MODEL
+# CUSTOMER TABLE
 # -------------------------
 
 class Customer(Base):
     __tablename__ = "customers"
 
-    customer_id: Mapped[str] = mapped_column(
-        String(36), primary_key=True
-    )
+    customer_id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, index=True)
+    email = Column(String, unique=True, nullable=False, index=True)
 
-    name: Mapped[str] = mapped_column(
-        String(100), nullable=False
-    )
+    # Relationships
+    accounts = relationship("Account", back_populates="customer")
+    complaints = relationship("Complaint", back_populates="customer")
 
-    email: Mapped[str] = mapped_column(
-        String(255), unique=True, nullable=False
-    )
-
-    accounts: Mapped[List["Account"]] = relationship(
-        back_populates="customer",
-        cascade="all, delete-orphan"
-    )
-
-    complaints: Mapped[List["Complaint"]] = relationship(
-        back_populates="customer"
-    )
-
+ 
 
 # -------------------------
-# ACCOUNT MODEL
+# ACCOUNT TABLE
 # -------------------------
 
 class Account(Base):
     __tablename__ = "accounts"
 
-    account_id: Mapped[str] = mapped_column(
-        String(36), primary_key=True
-    )
+    account_id = Column(Integer, primary_key=True, index=True)
+    customer_id = Column(Integer, ForeignKey("customers.customer_id"), nullable=False)
+    account_type = Column(String, nullable=False)
+    balance = Column(Float, nullable=False, default=0.0)
 
-    customer_id: Mapped[str] = mapped_column(
-        ForeignKey("customers.customer_id"),
-        nullable=False
-    )
-
-    account_type: Mapped[str] = mapped_column(
-        String(50), nullable=False
-    )
-
-    balance: Mapped[Decimal] = mapped_column(
-        Numeric(12, 2), nullable=False, default=Decimal("0.00")
-    )
-
-    customer: Mapped["Customer"] = relationship(
-        back_populates="accounts"
-    )
-
-    complaints: Mapped[List["Complaint"]] = relationship(
-        back_populates="account"
-    )
+    # Relationships
+    customer = relationship("Customer", back_populates="accounts")
+    complaints = relationship("Complaint", back_populates="accounts")
 
 
 # -------------------------
-# COMPLAINT MODEL
+# COMPLAINT TABLE
 # -------------------------
 
 class Complaint(Base):
     __tablename__ = "complaints"
 
-    complaint_id: Mapped[str] = mapped_column(
-        String(36), primary_key=True
-    )
+    complaint_id = Column(Integer, primary_key=True, index=True)
+    customer_id = Column(Integer, ForeignKey("customers.customer_id"), nullable=False)
+    account_id = Column(Integer, ForeignKey("accounts.account_id"), nullable=False)
 
-    customer_id: Mapped[str] = mapped_column(
-        ForeignKey("customers.customer_id"),
+    category = Column(
+        SQLAlchemyEnum(ComplaintCategory),
         nullable=False
     )
 
-    account_id: Mapped[str] = mapped_column(
-        ForeignKey("accounts.account_id"),
+    priority = Column(
+        SQLAlchemyEnum(ComplaintPriority),
         nullable=False
     )
 
-    category: Mapped[ComplaintCategory] = mapped_column(
-        SQLAlchemyEnum(
-            ComplaintCategory,
-            name="complaint_category",
-            native_enum=False
-        ),
-        nullable=False
-    )
+    description = Column(Text, nullable=False)
 
-    priority: Mapped[ComplaintPriority] = mapped_column(
-        SQLAlchemyEnum(
-            ComplaintPriority,
-            name="complaint_priority",
-            native_enum=False
-        ),
-        nullable=False
-    )
-
-    description: Mapped[str] = mapped_column(
-        Text, nullable=False
-    )
-
-    status: Mapped[ComplaintStatus] = mapped_column(
-        SQLAlchemyEnum(
-            ComplaintStatus,
-            name="complaint_status",
-            native_enum=False
-        ),
+    status = Column(
+        SQLAlchemyEnum(ComplaintStatus),
         nullable=False,
         default=ComplaintStatus.SUBMITTED
     )
 
-    customer: Mapped["Customer"] = relationship(
-        back_populates="complaints"
-    )
+    # Relationships
+    customer = relationship("Customer", back_populates="complaints")
+    account = relationship("Account", back_populates="accounts")
 
-    account: Mapped["Account"] = relationship(
-        back_populates="complaints"
-    )
-
-    status_history: Mapped[List["ComplaintStatusEvent"]] = relationship(
+    status_history = relationship(
+        "ComplaintStatusEvent",
         back_populates="complaint",
         cascade="all, delete-orphan",
         order_by="ComplaintStatusEvent.timestamp"
     )
 
+    # Business logic for status transitions
     def transition_status(
         self,
         new_status: ComplaintStatus,
-        event_id: str,
+        event_id: int,
         notes: Optional[str] = None
-    ) -> None:
+    ):
 
         allowed = ComplaintStatus.valid_transitions().get(
             self.status, []
@@ -215,49 +161,41 @@ class Complaint(Base):
 
 
 # -------------------------
-# COMPLAINT STATUS EVENT MODEL
+# COMPLAINT STATUS EVENT TABLE
 # -------------------------
 
 class ComplaintStatusEvent(Base):
     __tablename__ = "complaint_status_events"
 
-    event_id: Mapped[str] = mapped_column(
-        String(36), primary_key=True
-    )
+    event_id = Column(Integer, primary_key=True, index=True)
 
-    complaint_id: Mapped[str] = mapped_column(
+    complaint_id = Column(
+        Integer,
         ForeignKey("complaints.complaint_id"),
         nullable=False
     )
 
-    previous_status: Mapped[Optional[ComplaintStatus]] = mapped_column(
-        SQLAlchemyEnum(
-            ComplaintStatus,
-            name="previous_complaint_status",
-            native_enum=False
-        ),
+    previous_status = Column(
+        SQLAlchemyEnum(ComplaintStatus),
         nullable=True
     )
 
-    new_status: Mapped[ComplaintStatus] = mapped_column(
-        SQLAlchemyEnum(
-            ComplaintStatus,
-            name="new_complaint_status",
-            native_enum=False
-        ),
+    new_status = Column(
+        SQLAlchemyEnum(ComplaintStatus),
         nullable=False
     )
 
-    timestamp: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+    timestamp = Column(
+        DateTime,
+        default=datetime.utcnow,
         nullable=False
     )
 
-    notes: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True
-    )
+    notes = Column(Text, nullable=True)
 
-    complaint: Mapped["Complaint"] = relationship(
+    # Relationship
+    complaint = relationship(
+        "Complaint",
         back_populates="status_history"
     )
+
