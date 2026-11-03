@@ -42,9 +42,10 @@ are not returned. Unexpected errors return only the catalog's safe 500 message.
 
 ## Correlation and structured logs
 
-`app/middleware.py` accepts a caller correlation ID only when it has a UUID
-shape; otherwise it creates a UUID. The ID is returned in the
-`X-Correlation-ID` header and error payload. `app/core/logging_config.py`
+The FastAPI HTTP middleware decorator in `app/main.py` accepts a caller
+correlation ID only when it has a UUID shape; otherwise it creates a UUID.
+The ID is returned in the `X-Correlation-ID` header and error payload.
+`app/core/logging_config.py`
 emits one JSON record per request with `timestamp`, `level`,
 `correlation_id`, `operation`, `outcome`, and `duration_ms` (plus `status_code`).
 Operation names use the HTTP method and route template; request bodies,
