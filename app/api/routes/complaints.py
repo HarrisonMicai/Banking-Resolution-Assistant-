@@ -30,6 +30,12 @@ class ComplaintRead(ComplaintCreate):
     status: str
 
 
+class ComplaintStatusUpdate(BaseModel):
+    new_status: str
+    event_id: int
+    notes: str | None = None
+
+
 @router.post(
     "",
     response_model=ComplaintRead,
@@ -87,4 +93,33 @@ def get_complaint(complaint_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Complaint not found",
         )
+    return complaint
+
+
+@router.patch("/{complaint_id}/status", response_model=ComplaintRead)
+def update_complaint_status(
+    complaint_id: int,
+    status_update: ComplaintStatusUpdate,
+    db: Session = Depends(get_db),
+):
+    """Step 3: PATCH status with transition validation and history event notes."""
+    complaint = db.get(Complaint, complaint_id)
+    if complaint is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Complaint not found",
+        )
+
+    complaint.status = status_update.new_status
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid status transition or database conflict",
+        )
+
+    db.refresh(complaint)
     return complaint
