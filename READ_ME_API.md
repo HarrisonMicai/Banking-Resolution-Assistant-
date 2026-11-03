@@ -48,3 +48,22 @@ pip install fastapi uvicorn pydantic-settings psycopg2-binary python-dotenv
 # Run FASTAPI in env:
 
 uvicorn app.main:app --reload
+
+## Create an account before submitting a complaint
+
+In Swagger (`/docs`), create a customer with `POST /customers`, then use its
+returned `customer_id` with `POST /accounts`. The account response contains the
+`account_id` required by `POST /complaints`.
+
+Example request for `POST /accounts`:
+
+```json
+{
+  "customer_id": 1,
+  "account_type": "CHECKING",
+  "balance": 0
+}
+```
+
+`balance` is optional and defaults to `0`. Use the returned account ID and the
+same customer ID when creating the complaint.
