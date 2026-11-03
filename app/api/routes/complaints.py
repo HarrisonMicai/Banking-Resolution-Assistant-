@@ -33,7 +33,7 @@ class ComplaintRead(ComplaintCreate):
 
 
 class ComplaintStatusUpdate(BaseModel):
-    new_status: str
+    new_status: ComplaintStatus
     event_id: int
     notes: str | None = None
 
@@ -144,15 +144,31 @@ def update_complaint_status(
             detail="Complaint not found",
         )
 
-    complaint.status = status_update.new_status
+    try:
+        complaint.transition_status(
+            status_update.new_status,
+            event_id=status_update.event_id,
+            notes=status_update.notes,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Invalid complaint status transition",
+        ) from exc
 
     try:
         db.commit()
     except IntegrityError:
         db.rollback()
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid status transition or database conflict",
+            status_code=status.HTTP_409_CONFLICT,
+            detail="The request conflicts with the current resource state",
+        )
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="A required service is unavailable",
         )
 
     db.refresh(complaint)

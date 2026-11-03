@@ -73,4 +73,5 @@ def test_create_account_requires_existing_customer(client):
     )
 
     assert response.status_code == 404
-    assert response.json() == {"detail": "Customer not found"}
+    assert response.json()["code"] == "CUSTOMER_NOT_FOUND"
+    assert response.json()["message"] == "Customer not found"
