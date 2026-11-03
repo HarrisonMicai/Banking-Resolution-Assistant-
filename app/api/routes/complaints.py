@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
@@ -9,6 +9,8 @@ from app.models import (
     Complaint,
     ComplaintCategory,
     ComplaintPriority,
+    ComplaintStatus,
+    ComplaintStatusEvent,
     Customer,
 )
 
@@ -60,16 +62,48 @@ def create_complaint(
         )
 
     complaint = Complaint(**complaint_data.model_dump())
-    db.add(complaint)
     try:
+        # Stage the complaint first. flush() sends the INSERT to the database
+        # and populates its generated complaint_id, but does not commit it.
+        db.add(complaint)
+        db.flush()
+
+        # The initial status event is part of complaint creation, not a
+        # separate operation. Link it to the generated complaint ID and
+        # record the starting SUBMITTED status in the history.
+        db.add(
+            ComplaintStatusEvent(
+                complaint_id=complaint.complaint_id,
+                previous_status=None,
+                new_status=ComplaintStatus.SUBMITTED,
+            )
+        )
+
+        # This is the single commit point: both inserts become durable
+        # together, or neither does.
         db.commit()
     except IntegrityError:
+        # A constraint failure in either insert invalidates the whole unit
+        # of work, including a complaint that was already flushed.
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Complaint could not be saved",
+            detail="Complaint and initial status event could not be saved",
         )
+    except SQLAlchemyError:
+        # Roll back any database-level failure so no partial create remains.
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Complaint and initial status event could not be saved",
+        )
+    except Exception:
+        # Preserve unexpected errors while still leaving the session clean.
+        db.rollback()
+        raise
 
+    # Reload committed values (including database-generated fields) before
+    # returning the complaint through the response schema.
     db.refresh(complaint)
     return complaint
 
