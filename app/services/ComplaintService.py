@@ -25,6 +25,7 @@ class ComplaintService:
         account = self.account_repo.get_by_id(db, complaint_data.account_id)
         if not account:
             raise ValueError(f"Account with ID {complaint_data.account_id} not found.")
+        return self.complaint_repo.create(db, complaint_data)
 
     def get_complaint(self, db: Session, complaint_id: int):
         complaint = self.complaint_repo.get_by_id(db, complaint_id)
