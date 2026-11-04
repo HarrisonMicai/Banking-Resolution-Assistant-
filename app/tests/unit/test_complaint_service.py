@@ -1,7 +1,8 @@
 import pytest
 from unittest.mock import MagicMock
-from app.services.ComplaintService import ComplaintService
+from app.services.complaint_service import ComplaintService
 from app.models.models import Complaint, ComplaintStatus, ComplaintCategory, ComplaintPriority
+from app.services.exceptions import CustomerNotFoundError
 
 # --- STEP 2: FIXTURES ---
 
@@ -73,7 +74,13 @@ def test_create_complaint_missing_customer(mock_db):
         customer_repo=FakeCustomerRepo(exists=False),
         account_repo=FakeAccountRepo(exists=True)
     )
-    complaint_data = MagicMock(customer_id=999, account_id=100)
+    complaint_data = {
+        "customer_id": 999,
+        "account_id": 100,
+        "category": ComplaintCategory.BILLING,
+        "priority": ComplaintPriority.LOW,
+        "description": "Missing customer test",
+    }
     
-    with pytest.raises(ValueError, match="Customer with ID 999 not found"):
-        service.create_complaint(mock_db, complaint_data)
+    with pytest.raises(CustomerNotFoundError, match="Customer with ID 999 not found"):
+        service.create_complaint(mock_db, **complaint_data)

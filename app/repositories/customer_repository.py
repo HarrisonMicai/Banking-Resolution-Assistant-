@@ -1,14 +1,29 @@
-class CustomerRepository:
-    def __init__(self, db_manager):
-        self.db_manager = db_manager
+from sqlalchemy.orm import Session
 
-    def get_by_id(self, customer_id: str):
-        with self.db_manager.get_connection() as conn:
-            cursor = conn.cursor()
-            # Parameterized query
-            cursor.execute(
-                "SELECT * FROM customer WHERE customer_id = ?", 
-                (customer_id,)
-            )
-            row = cursor.fetchone()
-            return dict(row) if row else None
+from app.models import Customer
+
+
+class CustomerRepository:
+    def create(self, db: Session, *, name: str, email: str) -> Customer:
+        customer = Customer(name=name, email=email)
+        db.add(customer)
+        return customer
+
+    def get_by_id(self, db: Session, customer_id: int) -> Customer | None:
+        return db.get(Customer, customer_id)
+
+    def get_all(self, db: Session) -> list[Customer]:
+        return db.query(Customer).order_by(Customer.customer_id).all()
+
+    def update(
+        self,
+        db: Session,
+        customer: Customer,
+        updates: dict[str, str | None],
+    ) -> None:
+        db.add(customer)
+        for field, value in updates.items():
+            setattr(customer, field, value)
+
+    def delete(self, db: Session, customer: Customer) -> None:
+        db.delete(customer)

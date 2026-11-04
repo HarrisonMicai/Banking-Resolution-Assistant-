@@ -75,3 +75,33 @@ def test_create_account_requires_existing_customer(client):
     assert response.status_code == 404
     assert response.json()["code"] == "CUSTOMER_NOT_FOUND"
     assert response.json()["message"] == "Customer not found"
+
+
+def test_customer_update_list_and_delete_use_customer_service(client):
+    create_response = client.post(
+        "/customers",
+        json={"name": "Before Update", "email": "customer-service@example.com"},
+    )
+    customer_id = create_response.json()["customer_id"]
+
+    empty_update = client.patch(f"/customers/{customer_id}", json={})
+    assert empty_update.status_code == 422
+
+    update_response = client.patch(
+        f"/customers/{customer_id}",
+        json={"name": "After Update"},
+    )
+    assert update_response.status_code == 200
+    assert update_response.json()["name"] == "After Update"
+
+    list_response = client.get("/customers")
+    assert list_response.status_code == 200
+    assert [customer["customer_id"] for customer in list_response.json()] == [
+        customer_id
+    ]
+
+    delete_response = client.delete(f"/customers/{customer_id}")
+    assert delete_response.status_code == 204
+
+    missing_response = client.get(f"/customers/{customer_id}")
+    assert missing_response.status_code == 404

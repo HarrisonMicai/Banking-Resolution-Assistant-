@@ -1,42 +1,67 @@
 # Banking Resolution Assistant
 
-## Application structure
+## API architecture
 
-Application code lives in the `app/` Python package:
+The FastAPI application lives in `app/` and follows this request path:
 
 ```text
-app/
-├── api/           # HTTP routes and API wiring
-├── core/          # Shared configuration and infrastructure
-├── models/        # Domain models
-├── repositories/  # Database access
-├── schemas/       # API request and response schemas
-└── services/      # Business logic and complaint analysis
+HTTP request
+  -> app/main.py (middleware and router registration)
+  -> app/api/routes/ (HTTP validation and response mapping)
+  -> app/services/ (use-case orchestration and transaction boundaries)
+  -> app/repositories/ (SQLAlchemy reads and persistence staging)
+  -> app/models/ (ORM tables, relationships, and complaint status rules)
+  -> database
 ```
 
-The `api/` and `schemas/` packages are ready for future API code.
+Routes use FastAPI and Pydantic for the HTTP contract. They pass the SQLAlchemy
+session and validated values to a service. Services coordinate repositories,
+commit or roll back use-case transactions, and report expected business errors.
+Repositories perform ORM queries and stage changes in the session; they do not
+commit independently. The complaint service creates the complaint and its
+initial status event in one transaction.
 
-## Complaint analysis
+Pydantic request and response schemas are centralized in `app/schemas/`:
+customer contracts are in `customer_schema.py`, account contracts in
+`account_schema.py`, complaint contracts in `complaint_schema.py`, health
+responses in `health_schema.py`, and the root response in `root_schema.py`.
+The shared error response is in `error_schema.py`. Route modules import these
+models so FastAPI can validate requests and generate the corresponding
+OpenAPI schemas.
 
-Run the existing command from the repository root with
-`python complaint_analysis.py`. Its implementation is in
-`app/services/complaint_analysis.py`. It reads `complaints.csv` and writes
-`complaint_analysis_output.csv` in the current working directory.
+`app/error_handlers.py` maps HTTP, validation, and database exceptions into
+the standard API error shape. Middleware in `app/main.py` supplies a
+correlation ID and writes a structured request log using
+`app/core/logging_config.py`.
 
-## Data access
+The readiness endpoint probes the same SQLAlchemy engine used by API
+requests, so it reports whether the API's configured database is reachable.
 
-`app/core/database_manager.py` manages SQLite connections and transactions.
-Repositories in `app/repositories/` own database queries and use parameterized
-SQL. Set `DB_NAME` in the environment to select a database file; the default is
-`BankCRS.db`.
+## Database configuration
 
-```python
-from app.core.database_manager import DatabaseManager
-from app.repositories.customer_repository import CustomerRepository
+The API currently uses SQLAlchemy with the SQLite URL `sqlite:///customer.db`,
+configured in `app/database/connection.py`. `get_db` provides and closes a
+session for each request. `app/core/config.py` is retained as the central
+application settings module; its settings are not currently used to construct
+the API's SQLAlchemy engine.
 
-db_manager = DatabaseManager()
-customer_repo = CustomerRepository(db_manager)
+## Tests
 
-customer = customer_repo.get_by_id("CUST-12345")
-print(customer)
+Run the API test suite from the repository root in PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest app\tests -q
+```
+
+Integration tests override the database dependency with a fresh in-memory
+SQLite database, so they do not rely on records in `customer.db`.
+
+## Complaint analysis script
+
+The standalone script `complaint_analysis.py` reads `complaints.csv` from the
+current working directory and writes `complaint_analysis_output.csv` there.
+Run it from the repository root with:
+
+```powershell
+.\.venv\Scripts\python.exe complaint_analysis.py
 ```

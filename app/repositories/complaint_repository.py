@@ -1,30 +1,69 @@
 from sqlalchemy.orm import Session
-from app.models.models import Complaint, ComplaintStatus
+
+from app.models import (
+    Complaint,
+    ComplaintCategory,
+    ComplaintPriority,
+    ComplaintStatus,
+    ComplaintStatusEvent,
+)
+
 
 class ComplaintRepository:
-    def get_by_id(self, db: Session, complaint_id: int):
-        return db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+    def get_by_id(self, db: Session, complaint_id: int) -> Complaint | None:
+        return db.get(Complaint, complaint_id)
 
-    def get_for_customer(self, db: Session, customer_id: int):
-        return db.query(Complaint).filter(Complaint.customer_id == customer_id).all()
+    def get_all(
+        self,
+        db: Session,
+        customer_id: int | None = None,
+    ) -> list[Complaint]:
+        query = db.query(Complaint)
+        if customer_id is not None:
+            query = query.filter(Complaint.customer_id == customer_id)
+        return query.order_by(Complaint.complaint_id).all()
 
-    def create(self, db: Session, complaint_data):
+    def create(
+        self,
+        db: Session,
+        *,
+        customer_id: int,
+        account_id: int,
+        category: ComplaintCategory,
+        priority: ComplaintPriority,
+        description: str,
+    ) -> Complaint:
         complaint = Complaint(
-            customer_id=complaint_data.customer_id,
-            account_id=complaint_data.account_id,
-            category=complaint_data.category,
-            priority=complaint_data.priority,
-            description=complaint_data.description,
-            status=ComplaintStatus.SUBMITTED
+            customer_id=customer_id,
+            account_id=account_id,
+            category=category,
+            priority=priority,
+            description=description,
+            status=ComplaintStatus.SUBMITTED,
         )
         db.add(complaint)
-        db.commit()
-        db.refresh(complaint)
+        db.flush()
+        db.add(
+            ComplaintStatusEvent(
+                complaint_id=complaint.complaint_id,
+                previous_status=None,
+                new_status=ComplaintStatus.SUBMITTED,
+            )
+        )
         return complaint
 
-    def update_status(self, db: Session, complaint: Complaint, new_status: ComplaintStatus, event_id: int, notes: str = None):
-        # Utilizes domain model business logic method for status transition
-        complaint.transition_status(new_status, event_id=event_id, notes=notes)
-        db.commit()
-        db.refresh(complaint)
+    def update_status(
+        self,
+        db: Session,
+        complaint: Complaint,
+        new_status: ComplaintStatus,
+        event_id: int,
+        notes: str | None = None,
+    ) -> Complaint:
+        del db
+        complaint.transition_status(
+            new_status,
+            event_id=event_id,
+            notes=notes,
+        )
         return complaint

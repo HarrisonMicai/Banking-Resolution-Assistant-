@@ -1,30 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, ConfigDict
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.api.service_errors import raise_http_exception
 from app.database.connection import get_db
-from app.models import Customer
+from app.schemas.customer_schema import CustomerCreate, CustomerRead, CustomerUpdate
+from app.services.customer_service import CustomerService
+from app.services.dependencies import get_customer_service
+from app.services.exceptions import (
+    CustomerNotFoundError,
+    ServiceError,
+)
 
 router = APIRouter(prefix="/customers", tags=["Customers"])
-
-
-class CustomerCreate(BaseModel):
-    name: str
-    email: str
-
-
-class CustomerUpdate(BaseModel):
-    name: str | None = None
-    email: str | None = None
-
-
-class CustomerRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    customer_id: int
-    name: str
-    email: str
 
 
 @router.post(
@@ -35,36 +22,36 @@ class CustomerRead(BaseModel):
 def create_customer(
     customer_data: CustomerCreate,
     db: Session = Depends(get_db),
+    service: CustomerService = Depends(get_customer_service),
 ):
-    customer = Customer(**customer_data.model_dump())
-    db.add(customer)
     try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="A customer with this email already exists",
+        return service.create_customer(
+            db,
+            name=customer_data.name,
+            email=customer_data.email,
         )
-
-    db.refresh(customer)
-    return customer
+    except ServiceError as exc:
+        raise_http_exception(exc)
 
 
 @router.get("", response_model=list[CustomerRead])
-def list_customers(db: Session = Depends(get_db)):
-    return db.query(Customer).order_by(Customer.customer_id).all()
+def list_customers(
+    db: Session = Depends(get_db),
+    service: CustomerService = Depends(get_customer_service),
+):
+    return service.list_customers(db)
 
 
 @router.get("/{customer_id}", response_model=CustomerRead)
-def get_customer(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.get(Customer, customer_id)
-    if customer is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Customer not found",
-        )
-    return customer
+def get_customer(
+    customer_id: int,
+    db: Session = Depends(get_db),
+    service: CustomerService = Depends(get_customer_service),
+):
+    try:
+        return service.get_customer(db, customer_id)
+    except CustomerNotFoundError as exc:
+        raise_http_exception(exc)
 
 
 @router.patch("/{customer_id}", response_model=CustomerRead)
@@ -72,14 +59,8 @@ def update_customer(
     customer_id: int,
     customer_data: CustomerUpdate,
     db: Session = Depends(get_db),
+    service: CustomerService = Depends(get_customer_service),
 ):
-    customer = db.get(Customer, customer_id)
-    if customer is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Customer not found",
-        )
-
     updates = customer_data.model_dump(exclude_unset=True)
     if not updates:
         raise HTTPException(
@@ -87,37 +68,19 @@ def update_customer(
             detail="At least one customer field must be provided",
         )
 
-    for field, value in updates.items():
-        setattr(customer, field, value)
-
     try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="A customer with this email already exists",
-        )
-
-    db.refresh(customer)
-    return customer
+        return service.update_customer(db, customer_id, updates)
+    except ServiceError as exc:
+        raise_http_exception(exc)
 
 
 @router.delete("/{customer_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_customer(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.get(Customer, customer_id)
-    if customer is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Customer not found",
-        )
-
-    db.delete(customer)
+def delete_customer(
+    customer_id: int,
+    db: Session = Depends(get_db),
+    service: CustomerService = Depends(get_customer_service),
+):
     try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Customer cannot be deleted while related records exist",
-        )
+        service.delete_customer(db, customer_id)
+    except ServiceError as exc:
+        raise_http_exception(exc)

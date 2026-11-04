@@ -10,6 +10,7 @@ from app.database.base import Base
 from app.api.routes import accounts, complaints, customers, health
 from app.core.logging_config import configure_logging
 from app.database.connection import engine
+from app.schemas.root_schema import RootResponse
 from app.error_handlers import (
     handle_unexpected_error,
     log_request,
@@ -65,6 +66,6 @@ app.include_router(customers.router)
 app.include_router(health.router)
 
 
-@app.get("/", tags=["Root"])
+@app.get("/", tags=["Root"], response_model=RootResponse)
 def read_root():
     return {"message": "Welcome to the Banking Resolution Assistant API. Visit /docs for API documentation."}

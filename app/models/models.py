@@ -98,6 +98,10 @@ class Account(Base):
 class Complaint(Base):
     __tablename__ = "complaints"
 
+    def __init__(self, **kwargs):
+        kwargs.setdefault("status", ComplaintStatus.SUBMITTED)
+        super().__init__(**kwargs)
+
     complaint_id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.customer_id"), nullable=False)
     account_id = Column(Integer, ForeignKey("accounts.account_id"), nullable=False)

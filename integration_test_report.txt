@@ -1,0 +1,51 @@
+Integration Test Report
+=======================
+
+Date: 2026-11-03
+Command: .\.venv\Scripts\python.exe -m pytest app\tests\integration -q
+
+Environment
+-----------
+- FastAPI TestClient with the application routes and middleware.
+- Fresh in-memory SQLite database per test, using StaticPool.
+- Each test database is created and seeded with one customer and one account.
+- The application's get_db dependency is overridden to use the isolated test
+  database. State assertions use a separate session from the same test engine.
+- Dependency overrides, injected SQLAlchemy event listeners, and database
+  engines are cleaned up after each test.
+
+Run results
+-----------
+Run 1 (standard collection order): 6 passed, 0 failed (0.83 seconds).
+Run 2 (standard collection order): 6 passed, 0 failed (0.63 seconds).
+Run 3 (reverse test order):       6 passed, 0 failed (0.64 seconds).
+
+Coverage and evidence
+---------------------
+- Customer lookup: existing customer returns 200; unknown customer returns
+  structured 404. The seeded customer remains in the database.
+- Complaint create: valid request returns 201 and persists a SUBMITTED
+  complaint plus its initial status event. Missing required priority returns
+  structured 422 and does not create additional records.
+- Status update: SUBMITTED -> UNDER_REVIEW returns 200 and persists the new
+  status and transition event.
+- Invalid status transition: SUBMITTED -> RESOLVED returns structured 409;
+  persisted complaint status and event history remain unchanged.
+- Rollback: injected failure inserting the initial event returns structured
+  409; database inspection confirms neither complaint nor status event remains.
+- Unavailable dependency: injected SQLAlchemy OperationalError returns a safe
+  structured 503 with a correlation ID. Secret text and traceback are absent
+  from the response, and seeded database state is unchanged.
+- The correlation ID is checked in response headers for success and in both
+  response headers and error bodies for failures.
+
+Warnings
+--------
+Each run reports existing SQLAlchemy deprecation warnings for
+declarative_base() and datetime.utcnow(). They do not fail the integration
+tests.
+
+Result
+------
+All integration tests passed on two consecutive runs and in reverse order.
+The isolated database fixture made the suite repeatable and order-independent.

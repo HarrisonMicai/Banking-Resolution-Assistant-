@@ -3,17 +3,12 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.schemas.error_schema import ErrorResponse
+
 logger = logging.getLogger("banking_api")
-
-
-class ErrorResponse(BaseModel):
-    code: str
-    message: str
-    correlation_id: str
 
 
 ERROR_CATALOG: dict[str, tuple[int, str]] = {
@@ -65,9 +60,8 @@ def _error_response(
         headers={"X-Correlation-ID": correlation_id},
     )
 
-
-async def handle_validation_error(
-    request: Request,
+def handle_validation_error(
+request: Request,
     _exc: RequestValidationError,
 ) -> JSONResponse:
     del _exc
@@ -76,7 +70,7 @@ async def handle_validation_error(
     return _error_response(request, code, message, 422)
 
 
-async def handle_http_error(
+def handle_http_error(
     request: Request,
     exc: StarletteHTTPException,
 ) -> JSONResponse:
@@ -94,7 +88,7 @@ async def handle_http_error(
     return _error_response(request, code, safe_message, exc.status_code)
 
 
-async def handle_database_error(
+def handle_database_error(
     request: Request,
     _exc: SQLAlchemyError,
 ) -> JSONResponse:
@@ -104,7 +98,7 @@ async def handle_database_error(
     return _error_response(request, code, message, 503)
 
 
-async def handle_unexpected_error(
+def handle_unexpected_error(
     request: Request,
     _exc: Exception,
 ) -> JSONResponse:
@@ -129,9 +123,13 @@ def log_request(
     duration_ms: float,
     status_code: int,
 ) -> None:
-    level = logging.ERROR if status_code >= 500 else (
-        logging.WARNING if status_code >= 400 else logging.INFO
-    )
+    if status_code >= 500:
+        level = logging.ERROR
+    elif status_code >= 400:
+        level = logging.WARNING
+    else:
+        level = logging.INFO
+
     logger.log(
         level,
         "request_complete",

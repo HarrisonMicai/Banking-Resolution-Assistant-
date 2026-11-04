@@ -1,20 +1,27 @@
 from sqlalchemy.orm import Session
-from app.models.models import Account
+
+from app.models import Account
+
 
 class AccountRepository:
-    def create(self, db: Session, account_data):
+    def create(
+        self,
+        db: Session,
+        *,
+        customer_id: int,
+        account_type: str,
+        balance: float,
+    ) -> Account:
         account = Account(
-            customer_id=account_data.customer_id,
-            account_type=account_data.account_type,
-            balance=account_data.balance
+            customer_id=customer_id,
+            account_type=account_type,
+            balance=balance,
         )
         db.add(account)
-        db.commit()
-        db.refresh(account)
         return account
 
-    def get_by_id(self, db: Session, account_id: int):
-        return db.query(Account).filter(Account.account_id == account_id).first()
+    def get_by_id(self, db: Session, account_id: int) -> Account | None:
+        return db.get(Account, account_id)
 
-    def get_all(self, db: Session):
-        return db.query(Account).all()
+    def get_all(self, db: Session) -> list[Account]:
+        return db.query(Account).order_by(Account.account_id).all()

@@ -1,41 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, ConfigDict
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
+from app.api.service_errors import raise_http_exception
 from app.database.connection import get_db
-from app.models import Account, Customer
+from app.schemas.account_schema import AccountCreate, AccountRead
+from app.services.account_service import AccountService
+from app.services.dependencies import get_account_service
+from app.services.exceptions import ServiceError
 
 router = APIRouter(prefix="/accounts", tags=["Accounts"])
-
-
-class AccountCreate(BaseModel):
-    customer_id: int
-    account_type: str
-    balance: float = 0.0
-
-
-class AccountRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    account_id: int
-    customer_id: int
-    account_type: str
-    balance: float
 
 
 @router.post("", response_model=AccountRead, status_code=status.HTTP_201_CREATED)
 def create_account(
     account_data: AccountCreate,
     db: Session = Depends(get_db),
+    service: AccountService = Depends(get_account_service),
 ):
-    if db.get(Customer, account_data.customer_id) is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Customer not found",
+    try:
+        return service.create_account(
+            db,
+            customer_id=account_data.customer_id,
+            account_type=account_data.account_type,
+            balance=account_data.balance,
         )
-
-    account = Account(**account_data.model_dump())
-    db.add(account)
-    db.commit()
-    db.refresh(account)
-    return account
+    except ServiceError as exc:
+        raise_http_exception(exc)
