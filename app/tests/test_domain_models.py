@@ -1,6 +1,8 @@
 from datetime import datetime
+from fastapi.testclient import TestClient
+from app.main import app
 import pytest
-from models import (
+from app.models import (
     Account,
     Complaint,
     ComplaintCategory,
@@ -8,6 +10,8 @@ from models import (
     ComplaintStatus,
     Customer,
 )
+
+client = TestClient(app)
 
 def test_valid_complaint_creation():
     customer = Customer(customer_id="C123", name="Jane Doe", email="jane@example.com")

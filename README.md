@@ -1,72 +1,69 @@
-# Banking-Resolution-Assistant-
+# Banking Resolution Assistant
 
-Initial project structure:
+## API architecture
 
-spec/ — requirements and specifications
+The FastAPI application lives in `app/` and follows this request path:
 
-docs/ — project documentation
+```text
+HTTP request
+  -> app/main.py (middleware and router registration)
+  -> app/api/routes/ (HTTP validation and response mapping)
+  -> app/services/ (use-case orchestration and transaction boundaries)
+  -> app/repositories/ (SQLAlchemy reads and persistence staging)
+  -> app/models/ (ORM tables, relationships, and complaint status rules)
+  -> database
+```
 
-data/ — datasets and data-related assets
+Routes use FastAPI and Pydantic for the HTTP contract. They pass the SQLAlchemy
+session and validated values to a service. Services coordinate repositories,
+commit or roll back use-case transactions, and report expected business errors.
+Repositories perform ORM queries and stage changes in the session; they do not
+commit independently. The complaint service creates the complaint and its
+initial status event in one transaction.
 
-src/ — application source code
+Pydantic request and response schemas are centralized in `app/schemas/`:
+customer contracts are in `customer_schema.py`, account contracts in
+`account_schema.py`, complaint contracts in `complaint_schema.py`, health
+responses in `health_schema.py`, and the root response in `root_schema.py`.
+The shared error response is in `error_schema.py`. Route modules import these
+models so FastAPI can validate requests and generate the corresponding
+OpenAPI schemas.
 
-tests/ — automated tests
+`app/error_handlers.py` maps HTTP, validation, and database exceptions into
+the standard API error shape. Middleware in `app/main.py` supplies a
+correlation ID and writes a structured request log using
+`app/core/logging_config.py`.
 
-Add language- and framework-specific setup as the implementation stack is chosen.
+The readiness endpoint probes the same SQLAlchemy engine used by API
+requests, so it reports whether the API's configured database is reachable.
+Authentication is currently disabled. Do not expose this API to untrusted
+networks or use it with real customer data.
 
-# Python
-pycache/ *.py[cod] *.pyo *.pyd *.egg-info/ venv/ .venv/ env/
+## Database configuration
 
-# Node
-node_modules/ npm-debug.log* yarn-debug.log* yarn-error.log*
+The API currently uses SQLAlchemy with the SQLite URL `sqlite:///customer.db`,
+configured in `app/database/connection.py`. `get_db` provides and closes a
+session for each request. `app/core/config.py` is retained as the central
+application settings module; its settings are not currently used to construct
+the API's SQLAlchemy engine.
 
-# Environment Variables
-.env .env.local .env.*.local
+## Tests
 
-# Databases
-*.db *.sqlite *.sqlite3
+Run the API test suite from the repository root in PowerShell:
 
-# Logs
-logs/ *.log
+```powershell
+.\.venv\Scripts\python.exe -m pytest app\tests -q
+```
 
-# IDE
-.vscode/ .idea/ *.iml
+Integration tests override the database dependency with a fresh in-memory
+SQLite database, so they do not rely on records in `customer.db`.
 
-# OS
-.DS_Store Thumbs.db
+## Complaint analysis script
 
-# Build
-dist/ build/ coverage/
+The standalone script `complaint_analysis.py` reads `complaints.csv` from the
+current working directory and writes `complaint_analysis_output.csv` there.
+Run it from the repository root with:
 
-# Testing
-.pytest_cache/ .coverage
-
-Misc
-*.swp *.swo
-
-
-## Data Access Layer & Repositories
-
-### Configuration
-The data layer relies on configuration variables defined via environment files (see `environment_example.txt`). Ensure your local environment maps parameters correctly:
-- `DB_NAME`: Target database filename or connection target.
-
-### Responsibilities
-- **DatabaseManager (`src/data/database_manager.py`)**: Handles the database connection lifecycle and provides transactional context managers (`transaction()`) that handle automated commits and rollbacks on errors.
-- **Repositories (`src/data/*_repository.py`)**: Encapsulate persistence logic, querying, and object mapping for entities like Customers, Accounts, and Complaints.
-
-### Where SQL is Allowed and Prohibited
-- **Allowed:** Exclusively inside designated repository files (`src/data/`). Repositories are the single source of truth for handling queries and raw database commands.
-- **Prohibited:** Raw SQL statements are strictly prohibited inside business workflow logic, UI layers, API route handlers, or agent tool wrappers. All database interaction must flow through repository methods using **parameterized queries** to protect against SQL injection vulnerabilities.
-
-### Example Call
-```python
-from src.data.database_manager import DatabaseManager
-from src.data.customer_repository import CustomerRepository
-
-db_manager = DatabaseManager()
-customer_repo = CustomerRepository(db_manager)
-
-# Fetch customer record safely
-customer = customer_repo.get_by_id("CUST-12345")
-print(customer)
+```powershell
+.\.venv\Scripts\python.exe complaint_analysis.py
+```
