@@ -4,7 +4,16 @@ This project implements a production-aware Python API backend for the Banking Co
 
 ## Prerequisites
 - **Python 3.10+**
-- **PostgreSQL** instance running locally or remotely
+- Install dependencies from the repository root:
+  ```powershell
+  .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+  ```
+- The current API is configured to use SQLite (`customer.db`); PostgreSQL is
+  not required by the current application configuration.
+
+Authentication is currently disabled. Run this API only in a trusted local
+development environment; do not expose it to untrusted networks or use it with
+real customer data.
 
 ## Project Directory Structure
 ```text
@@ -67,3 +76,9 @@ Example request for `POST /accounts`:
 
 `balance` is optional and defaults to `0`. Use the returned account ID and the
 same customer ID when creating the complaint.
+
+Complaint history is available through
+`GET /complaints/{complaint_id}/status-history`. Complaint deletion is a
+supervisor-only soft delete: normal complaint reads return not found, while
+the complaint record, status history, and deletion actor/timestamp are retained
+in the database. No retention/purge job is configured.

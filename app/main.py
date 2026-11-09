@@ -22,10 +22,7 @@ configure_logging()
 app = FastAPI()
 register_error_handlers(app)
 
-_CORRELATION_ID_PATTERN = re.compile(
-    r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-"
-    r"[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
-)
+
 
 
 @app.middleware("http")
@@ -33,19 +30,14 @@ async def correlation_id_middleware(
     request: Request,
     call_next: Callable[[Request], Awaitable[Response]],
 ) -> Response:
-    supplied_id = request.headers.get("X-Correlation-ID", "")
-    correlation_id = (
-        supplied_id
-        if _CORRELATION_ID_PATTERN.fullmatch(supplied_id)
-        else str(uuid4())
-    )
+    correlation_id = str(uuid4())
     request.state.correlation_id = correlation_id
     started_at = time.perf_counter()
 
     try:
         response = await call_next(request)
     except Exception as exc:
-        response = await handle_unexpected_error(request, exc)
+        response = handle_unexpected_error(request, exc)
     response.headers["X-Correlation-ID"] = correlation_id
     status_code = response.status_code
 

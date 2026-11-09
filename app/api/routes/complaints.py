@@ -6,6 +6,7 @@ from app.database.connection import get_db
 from app.schemas.complaint_schema import (
     ComplaintCreate,
     ComplaintRead,
+    ComplaintStatusEventRead,
     ComplaintStatusUpdate,
 )
 from app.services.dependencies import get_complaint_service
@@ -41,10 +42,11 @@ def create_complaint(
 @router.get("", response_model=list[ComplaintRead])
 def list_complaints(
     customer_id: int | None = Query(default=None),
+    account_id: int | None = Query(default=None),
     db: Session = Depends(get_db),
     service: ComplaintService = Depends(get_complaint_service),
 ):
-    return service.list_complaints(db, customer_id)
+    return service.list_complaints(db, customer_id, account_id)
 
 
 @router.get("/{complaint_id}", response_model=ComplaintRead)
@@ -75,5 +77,36 @@ def update_complaint_status(
             event_id=status_update.event_id,
             notes=status_update.notes,
         )
+    except ServiceError as exc:
+        raise_http_exception(exc)
+
+
+@router.get(
+    "/{complaint_id}/status-history",
+    response_model=list[ComplaintStatusEventRead],
+)
+def get_complaint_status_history(
+    complaint_id: int,
+    db: Session = Depends(get_db),
+    service: ComplaintService = Depends(get_complaint_service),
+):
+    """Step 4: GET status history for a complaint."""
+    try:
+        return service.get_complaint_status_history(db, complaint_id)
+    except ServiceError as exc:
+        raise_http_exception(exc)
+
+
+@router.delete(
+    "/{complaint_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_complaint(
+    complaint_id: int,
+    db: Session = Depends(get_db),
+    service: ComplaintService = Depends(get_complaint_service),
+):
+    try:
+        service.delete_complaint(db, complaint_id, "unauthenticated")
     except ServiceError as exc:
         raise_http_exception(exc)

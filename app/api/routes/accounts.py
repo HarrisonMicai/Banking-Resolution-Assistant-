@@ -26,3 +26,33 @@ def create_account(
         )
     except ServiceError as exc:
         raise_http_exception(exc)
+
+@router.get("", response_model=list[AccountRead])
+def list_accounts(
+    customer_id: int | None = None,
+    db: Session = Depends(get_db),
+    service: AccountService = Depends(get_account_service),
+):
+    return service.list_accounts(db, customer_id)
+
+@router.get("/{account_id}", response_model=AccountRead)
+def get_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    service: AccountService = Depends(get_account_service),
+):
+    try:
+        return service.get_account(db, account_id)
+    except ServiceError as exc:
+        raise_http_exception(exc)
+
+@router.delete("/{account_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    service: AccountService = Depends(get_account_service),
+):
+    try:
+        service.delete_account(db, account_id)
+    except ServiceError as exc:
+        raise_http_exception(exc)

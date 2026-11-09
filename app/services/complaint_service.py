@@ -2,6 +2,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.models import Complaint, ComplaintCategory, ComplaintPriority, ComplaintStatus
+from app.models.models import ComplaintStatusEvent
 from app.repositories.account_repository import AccountRepository
 from app.repositories.complaint_repository import ComplaintRepository
 from app.repositories.customer_repository import CustomerRepository
@@ -85,8 +86,9 @@ class ComplaintService:
         self,
         db: Session,
         customer_id: int | None = None,
+        account_id: int | None = None,
     ) -> list[Complaint]:
-        return self.complaint_repo.get_all(db, customer_id)
+        return self.complaint_repo.get_all(db, customer_id, account_id)
 
     def get_complaint(self, db: Session, complaint_id: int) -> Complaint:
         complaint = self.complaint_repo.get_by_id(db, complaint_id)
@@ -133,3 +135,30 @@ class ComplaintService:
             raise
 
         return complaint
+
+    def get_complaint_status_history(
+        self,
+        db: Session,
+        complaint_id: int,
+    ) -> list[ComplaintStatusEvent]:
+        self.get_complaint(db, complaint_id)
+        return self.complaint_repo.get_status_history(db, complaint_id)
+
+    def delete_complaint(
+        self,
+        db: Session,
+        complaint_id: int,
+        deleted_by: str,
+    ) -> None:
+        complaint = self.get_complaint(db, complaint_id)
+        try:
+            self.complaint_repo.soft_delete(db, complaint, deleted_by)
+            db.commit()
+        except IntegrityError as exc:
+            db.rollback()
+            raise ResourceConflictError(
+                "Complaint cannot be deleted while related records exist"
+            ) from exc
+        except Exception:
+            db.rollback()
+            raise

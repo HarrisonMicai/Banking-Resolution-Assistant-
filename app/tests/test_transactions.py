@@ -36,10 +36,12 @@ def client_and_session_factory():
         finally:
             db.close()
 
+    previous_overrides = app.dependency_overrides.copy()
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
         yield test_client, session_factory
     app.dependency_overrides.clear()
+    app.dependency_overrides.update(previous_overrides)
     engine.dispose()
 
 

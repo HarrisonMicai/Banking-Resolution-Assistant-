@@ -1,65 +1,62 @@
 # Week 3 Code Review Checklist
 
-Checklist derived from the exercise requirements supplied in the task. The
-separate `code_review_checklist.md` resource was not present in the repository.
+Review scope: Week 3 API implementation and the requested fixes on local
+`Sprint-2`, against `specs/complaint-resolution/Banking Spec 1.3.1.md`.
+
+Follow-up: Authentication has since been temporarily disabled. Customer,
+account, and complaint routes are unauthenticated; run locally only.
 
 | Review area | Result | Evidence / comment | Blocking |
 |---|---|---|---|
-| Spec alignment | PARTIAL | Complaint/customer retrieval and intake align with FR-1, FR-3, Core Flow 1, EC-1, and EC-2. Authentication/authorization required by Security preconditions is absent; auditability and human approval requirements are not implemented in this scope. | YES before external use |
-| Correctness | PASS | Complaint creation and its initial status event are committed atomically. Repository failures roll back and re-raise. Full suite passes. | NO |
-| Layer boundaries | REVIEW | HTTP errors are raised with FastAPI `HTTPException` and formatted centrally. The current complaint/customer routes also access SQLAlchemy sessions directly rather than delegating persistence through the repository/service layers. | NO |
-| Parameterized SQL | PASS WITH SCOPE NOTE | API persistence uses SQLAlchemy query/model operations; customer repository uses a bound `?` parameter. No string-built SQL was identified in the reviewed route path. | NO |
-| Secrets / data protection | PARTIAL | Structured logging uses an allow-list and excludes request bodies and exception text; error bodies use safe messages. Authentication/access control is absent. Sonar security hotspot results remain unavailable until Connected Mode is configured. | YES before external use |
-| Tests | PASS | Full suite: 30 passed, 10 warnings. Integration suite: 6 passed in standard order twice and reverse order once. | NO |
-| Errors / logging | PASS WITH FOLLOW-UP | Standardized error body, correlation header, and request log are exercised. `HTTP_ERROR_CODES` depends on exact detail strings, which is brittle. | NO |
-| Documentation | PARTIAL | Integration setup and results are documented. Review-specific source templates were absent; local PR evidence and this checklist were created from the requirements supplied in the prompt. | NO |
-| SonarQube | USER-REPORTED FIXES; SECURITY REVIEW PENDING | User reports using the built-in VS Code SonarQube extension, fixing asynchronous-code findings and duplication findings. The exact rules/findings and post-fix scan are not recorded here. Security hotspot retrieval still reports that the workspace is not bound to a remote SonarQube project. | Security review evidence pending |
-| PR scope / base | FAIL | `Sprint-2` is 14 commits ahead of `origin/main`; its current committed tree includes 5,835 files under `app/venv/`. Those generated files are staged for removal from the branch tree, but the cleanup is not committed. The remote has no `develop` branch and no matching open PR was found. | YES |
+| Spec alignment | PARTIAL | Complaint routes now require OIDC/JWT identity and roles, and complaint deletion retains the record/history with actor/timestamp. Document retrieval, recommendation, analyst override, and approval audit events remain unimplemented because those features/endpoints are not present. | YES before complete spec sign-off |
+| Correctness | PASS | Status-history returns its event response schema; history lookup first verifies the complaint is active; soft delete hides the complaint but retains complaint/event rows and records the deleting subject/time. | NO |
+| Layer boundaries | PASS | Routes delegate to services/repositories. Authentication and role checks are reusable FastAPI dependencies. | NO |
+| Parameterized SQL | PASS | Reviewed persistence uses SQLAlchemy ORM filters and model operations; no interpolated SQL was found. | NO |
+| Secrets / data protection | PASS WITH DEPLOYMENT GATE | All customer/account/complaint routes enforce configured RS256 JWT verification and role policies. Issuer/audience/JWKS settings are not yet known and must be configured before valid access is possible. No static-token bypass exists. | YES until configured |
+| Tests | PASS | Full suite: 45 passed, 16 warnings. Added JWT claim/signature, missing-auth, role-denial, history-contract, unknown-history, and soft-delete-retention coverage. | NO |
+| Errors / logging | PASS WITH FOLLOW-UP | Auth failures map to structured 401/403/503 errors, preserving the bearer challenge header. Existing error-code mapping still partly depends on human-readable detail strings. | NO |
+| Documentation | PASS WITH LIMITATION | `READ_ME_API.md` documents auth configuration/roles, history and soft-delete behavior. Full audit event types for documents/recommendations/overrides/approvals await those features. | NO |
+| PR scope / review process | OPEN | Per user direction, changes remain on `Sprint-2`. No remote PR exists; no GitHub PR creation/review-comment capability is available in this session. No approval or merge occurred. | YES for formal remote review |
 
-## Local review findings
+## Review findings and disposition
 
-### BLOCKING
+### Resolved in the local implementation
 
-1. **PR hygiene:** the branch comparison contains 5,835 vendored virtual
-   environment files. Narrow the branch/PR to intended source, tests, and
-   evidence before review; generated environments must not be submitted.
-2. **Security/spec:** the approved specification requires authentication and
-   role-based access, but no such protection is present on the API routes.
-   Do not expose these endpoints externally until the requirement is met or
-   the scope is formally approved.
-3. **Review process:** no PR exists for `Sprint-2`, and `origin` has no
-   `develop` branch. Confirm the target branch and create the scoped feature
-   PR before requesting coach/reviewer approval.
-4. **Sonar evidence:** user reports fixing asynchronous-code and duplication
-   findings reported by the VS Code SonarQube extension. Record the finding
-   details and rerun result in the PR evidence. Security hotspot retrieval
-   remains unavailable until Connected Mode is configured and the hotspots
-   are reviewed.
+1. **Authentication/authorization:** Customer, account, and complaint routes
+   now validate RS256 bearer JWTs using configured issuer, audience, and JWKS
+   URL. Reads allow `analyst`, `supervisor`, and `specialist`; create/update
+   allow `analyst`; delete allows `supervisor`. Missing configuration fails
+   closed. Provider settings must be supplied before deployment.
+2. **Complaint deletion/history retention:** Complaint deletion is now a
+   supervisor-only soft delete. `ComplaintSoftDeletion` records actor subject
+   and timestamp while retaining the complaint and its status events; normal
+   complaint reads/history return not found after deletion.
+3. **Status-history contract:** `GET /complaints/{id}/status-history` returns
+   `ComplaintStatusEventRead`, including previous/new status, timestamp,
+   event ID, and notes.
+4. **Unknown complaint history:** The service verifies the complaint exists
+   and is not soft-deleted before returning history; missing records produce
+   the standard 404.
 
-### NON-BLOCKING
+### Still open
 
-1. **Error-code mapping maintainability:** route detail strings are used as
-   lookup keys for error codes. A future wording change can silently fall back
-   to a generic code; a typed error code or status-to-code mapping would be
-   less fragile.
-2. **Layering:** routes make direct database calls. This works for the current
-   API but couples the HTTP layer to SQLAlchemy and duplicates persistence
-   orchestration.
-3. **Deprecation cleanup:** SQLAlchemy warns about `declarative_base()` and
-   `datetime.utcnow()`; these warnings did not fail tests.
-4. **Local schema edit:** `app/schemas/complaint_schema.py` has an uncommitted
-   change removing `Field` descriptions and adding trailing whitespace. It is
-   not part of this review scope and should remain excluded unless
-   intentionally requested.
+1. **Full audit coverage:** Current complaint status events and soft-delete
+   metadata are retained. The API has no document retrieval, recommendation,
+   analyst override, or approval endpoints, so those event types cannot yet be
+   emitted. They remain required before full spec sign-off.
+2. **Remote PR gate:** No remote PR or reviewer/coach approval is recorded.
+   The changes are local and uncommitted on `Sprint-2`; no remote PR creation
+   capability was available.
+3. **Identity provider config:** Issuer, audience, and JWKS URL remain unset.
+   The API correctly rejects missing credentials and fails closed if a token
+   is presented while settings are incomplete.
 
-## Review comments / resolution trail
+## Verification
 
-- Local findings above are review comments prepared for the PR.
-- No remote comments were posted because no PR exists.
-- Domain/repository test failures were fixed; the complete suite now passes.
-- Generated virtual-environment files are staged for removal from the branch
-  tree, and ignore rules were added. Commit the cleanup before creating a PR.
-- Authentication/authorization, SonarQube security hotspot review, and PR
-  target confirmation remain unresolved. User-reported Sonar async and
-  duplication fixes need their result captured in the PR evidence.
-- Current merge recommendation: **DO NOT MERGE**.
+- `.\.venv\Scripts\python.exe -m pytest app\tests -q`: **45 passed**, exit
+  code 0; **16 warnings**.
+- `git diff --check`: **PASS**.
+- No remote review comments, approval, or merge were made.
+
+**Recommendation: do not expose externally until OIDC settings are configured.
+Formal merge approval remains outstanding.**

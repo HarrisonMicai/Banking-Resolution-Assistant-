@@ -36,6 +36,8 @@ correlation ID and writes a structured request log using
 
 The readiness endpoint probes the same SQLAlchemy engine used by API
 requests, so it reports whether the API's configured database is reachable.
+Authentication is currently disabled. Do not expose this API to untrusted
+networks or use it with real customer data.
 
 ## Database configuration
 

@@ -1,5 +1,6 @@
 import json
 import logging
+from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
@@ -31,10 +32,12 @@ def api_client():
         finally:
             db.close()
 
+    previous_overrides = app.dependency_overrides.copy()
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app, raise_server_exceptions=False) as client:
         yield client
     app.dependency_overrides.clear()
+    app.dependency_overrides.update(previous_overrides)
     engine.dispose()
 
 
@@ -96,7 +99,9 @@ def test_missing_required_fields_return_structured_422(
         422,
         "VALIDATION_ERROR",
     )
-    assert body["correlation_id"] == "11111111-1111-4111-8111-111111111111"
+    supplied_id = "11111111-1111-4111-8111-111111111111"
+    assert body["correlation_id"] != supplied_id
+    assert str(UUID(body["correlation_id"])) == body["correlation_id"]
     assert body["message"] == "Request validation failed"
 
 

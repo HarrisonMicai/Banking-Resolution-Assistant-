@@ -64,6 +64,11 @@ class CustomerService:
 
     def delete_customer(self, db: Session, customer_id: int) -> None:
         customer = self.get_customer(db, customer_id)
+        if self.customer_repo.has_related_records(db, customer_id):
+            raise ResourceConflictError(
+                "Customer cannot be deleted while related records exist"
+            )
+
         try:
             self.customer_repo.delete(db, customer)
             db.commit()

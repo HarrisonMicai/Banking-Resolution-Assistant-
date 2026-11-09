@@ -10,7 +10,7 @@ from sqlalchemy import (
     Text
 )
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
@@ -201,4 +201,20 @@ class ComplaintStatusEvent(Base):
     complaint = relationship(
         "Complaint",
         back_populates="status_history"
+    )
+
+
+class ComplaintSoftDeletion(Base):
+    __tablename__ = "complaint_soft_deletions"
+
+    complaint_id = Column(
+        Integer,
+        ForeignKey("complaints.complaint_id"),
+        primary_key=True,
+    )
+    deleted_by = Column(String, nullable=False)
+    deleted_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
     )
