@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from starlette.responses import Response
 
 from app.database.base import Base
-from app.api.routes import accounts, complaints, customers, health
+from app.api.routes import accounts, complaints, customers, health, answers
 from app.core.logging_config import configure_logging
 from app.database.connection import engine
 from app.schemas.root_schema import RootResponse
@@ -56,7 +56,7 @@ app.include_router(accounts.router)
 app.include_router(complaints.router)
 app.include_router(customers.router)
 app.include_router(health.router)
-
+app.include_router(answers.router)
 
 @app.get("/", tags=["Root"], response_model=RootResponse)
 def read_root():

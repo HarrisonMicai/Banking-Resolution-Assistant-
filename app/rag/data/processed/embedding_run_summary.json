@@ -1,0 +1,12 @@
+{
+  "provider": "google",
+  "model": "gemini-embedding-001",
+  "dimensions": 768,
+  "input_chunks": 224,
+  "cached_embeddings": 224,
+  "successful_batches": 14,
+  "failed_batches": [],
+  "duration_seconds": 139.68,
+  "completed": true,
+  "cache_file": "C:\\Users\\micai\\Downloads\\art-gallery-REST-API\\Banking-Resolution-Assistant-\\app\\rag\\data\\processed\\embedding_cache.jsonl"
+}

@@ -1,3 +1,4 @@
+
 import logging
 
 from fastapi import FastAPI, Request
@@ -5,8 +6,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
+import traceback 
 from app.schemas.error_schema import ErrorResponse
+
 
 logger = logging.getLogger("banking_api")
 
@@ -23,6 +25,7 @@ ERROR_CATALOG: dict[str, tuple[int, str]] = {
     "DEPENDENCY_UNAVAILABLE": (503, "A required service is unavailable"),
     "INTERNAL_ERROR": (500, "An unexpected error occurred"),
 }
+
 
 HTTP_ERROR_CODES = {
     "Customer not found": "CUSTOMER_NOT_FOUND",
@@ -50,6 +53,7 @@ def _error_response(
     status_code: int,
 ) -> JSONResponse:
     correlation_id = _correlation_id(request)
+
     return JSONResponse(
         status_code=status_code,
         content=ErrorResponse(
@@ -60,13 +64,14 @@ def _error_response(
         headers={"X-Correlation-ID": correlation_id},
     )
 
+
 def handle_validation_error(
-request: Request,
+    request: Request,
     _exc: RequestValidationError,
 ) -> JSONResponse:
-    del _exc
-    _, message = ERROR_CATALOG["VALIDATION_ERROR"]
     code = "VALIDATION_ERROR"
+    _, message = ERROR_CATALOG[code]
+
     return _error_response(request, code, message, 422)
 
 
@@ -75,7 +80,9 @@ def handle_http_error(
     exc: StarletteHTTPException,
 ) -> JSONResponse:
     detail = exc.detail if isinstance(exc.detail, str) else ""
+
     code = HTTP_ERROR_CODES.get(detail)
+
     if code is None:
         code = {
             422: "VALIDATION_ERROR",
@@ -84,35 +91,85 @@ def handle_http_error(
             400: "BAD_REQUEST",
             503: "DEPENDENCY_UNAVAILABLE",
         }.get(exc.status_code, "INTERNAL_ERROR")
+
     _, safe_message = ERROR_CATALOG[code]
-    return _error_response(request, code, safe_message, exc.status_code)
+
+    return _error_response(
+        request,
+        code,
+        safe_message,
+        exc.status_code,
+    )
 
 
 def handle_database_error(
     request: Request,
     _exc: SQLAlchemyError,
 ) -> JSONResponse:
-    del _exc
+    logger.error(
+        "database_error",
+        exc_info=(type(_exc), _exc, _exc.__traceback__),
+        extra={
+            "correlation_id": _correlation_id(request),
+        },
+    )
+
     code = "DEPENDENCY_UNAVAILABLE"
     _, message = ERROR_CATALOG[code]
+
     return _error_response(request, code, message, 503)
 
 
-def handle_unexpected_error(
-    request: Request,
-    _exc: Exception,
-) -> JSONResponse:
-    del _exc
+def handle_unexpected_error(request, _exc):
+    import traceback
+
+    print("\n========== ACTUAL PYTHON ERROR ==========", flush=True)
+    traceback.print_exception(
+        type(_exc),
+        _exc,
+        _exc.__traceback__
+    )
+    print("=========================================\n", flush=True)
+
+    logger.error(
+        "unexpected_error",
+        exc_info=(type(_exc), _exc, _exc.__traceback__),
+        extra={"correlation_id": _correlation_id(request)},
+    )
+
     code = "INTERNAL_ERROR"
-    _, message = ERROR_CATALOG[code]
-    return _error_response(request, code, message, 500)
+    message = "An unexpected error occurred"
+
+    return JSONResponse(
+        status_code=500,
+        content={
+            "code": code,
+            "message": message,
+            "correlation_id": _correlation_id(request),
+        },
+    )
 
 
 def register_error_handlers(app: FastAPI) -> None:
-    app.add_exception_handler(RequestValidationError, handle_validation_error)
-    app.add_exception_handler(StarletteHTTPException, handle_http_error)
-    app.add_exception_handler(SQLAlchemyError, handle_database_error)
-    app.add_exception_handler(Exception, handle_unexpected_error)
+    app.add_exception_handler(
+        RequestValidationError,
+        handle_validation_error,
+    )
+
+    app.add_exception_handler(
+        StarletteHTTPException,
+        handle_http_error,
+    )
+
+    app.add_exception_handler(
+        SQLAlchemyError,
+        handle_database_error,
+    )
+
+    app.add_exception_handler(
+        Exception,
+        handle_unexpected_error,
+    )
 
 
 def log_request(

@@ -1,0 +1,14 @@
+source_id,title,document_type,category,version,effective_date,access_label,status,relative_path
+KB-001,Enterprise Complaint Management Policy,Policy,Enterprise Governance,3,1/1/2026,Internal,Approved,01_Current_Approved_Policies/KB-001_Enterprise_Complaint_Management_Policy.docx
+KB-002,"Escalation, Approval and Decision Authority Standard",Policy,Enterprise Governance,2.1,2/15/2026,Restricted,Approved,01_Current_Approved_Policies/KB-002_Escalation_Approval_and_Decision_Authority_Standard.docx
+KB-003,"Fee, Charge and Interest Complaint Playbook",Playbook,Fee & Charge Operations,2,3/1/2026,Internal,Approved,02_Operational_Playbooks/KB-003_Fee_Charge_and_Interest_Complaint_Playbook.docx
+KB-004,Digital Banking and Account Access Operations Guide,Guide,Digital Banking & Access,2,3/20/2026,Internal,Approved,02_Operational_Playbooks/KB-004_Digital_Banking_and_Account_Access_Operations_Guide.docx
+KB-005,"Customer Service, Communication and Accessibility Standard",Policy,Customer Service Standards,2,4/1/2026,Internal,Approved,01_Current_Approved_Policies/KB-005_Customer_Service_Communication_and_Accessibility_Standard.docx
+KB-006,Mortgage Servicing Complaint Investigation Playbook,Playbook,Mortgage Servicing,2,4/15/2026,Internal,Approved,02_Operational_Playbooks/KB-006_Mortgage_Servicing_Complaint_Investigation_Playbook.docx
+KB-007,Complaint Investigation and Resolution Analyst Playbook,Playbook,Analyst Operations,2,5/1/2026,Internal,Approved,02_Operational_Playbooks/KB-007_Complaint_Investigation_and_Resolution_Analyst_Playbook.docx
+KB-008,"AI Governance, Information Security and Audit Standard",Policy,AI Governance & Security,2,5/15/2026,Restricted,Approved,01_Current_Approved_Policies/KB-008_AI_Governance_Information_Security_and_Audit_Standard.docx
+KB-009,Complaint Operations Knowledge Articles and FAQ,FAQ,Customer Operations & FAQ,1,6/1/2026,Internal,Approved,03_Knowledge_Articles_and_FAQ/KB-009_Complaint_Operations_Knowledge_Articles_and_FAQ.docx
+KB-010,Historical Complaint Casebook,Casebook,Historical Reference,1,6/15/2026,Internal,Approved,03_Knowledge_Articles_and_FAQ/KB-010_Historical_Complaint_Casebook.docx
+BUL-2026-01,Operational Bulletin: Approval Threshold Clarification,Bulletin,Policy Bulletins & Updates,1,2/20/2026,Internal,Approved,04_Bulletins_and_Versioning/BUL-2026-01_Approval_Threshold_Clarification.docx
+BUL-2026-02,Operational Bulletin: RAG Source and Citation Controls,Bulletin,Policy Bulletins & Updates,1,5/20/2026,Restricted,Approved,04_Bulletins_and_Versioning/BUL-2026-02_RAG_Source_and_Citation_Controls.docx
+KB-001-OLD,Superseded Complaint Handling Policy,Policy,Historical Reference,1.4,1/1/2024,Internal,Superseded,04_Bulletins_and_Versioning/KB-001-OLD_Superseded_Complaint_Handling_Policy.docx

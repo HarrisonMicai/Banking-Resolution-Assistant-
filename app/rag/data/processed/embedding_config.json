@@ -1,0 +1,8 @@
+{
+  "provider": "google",
+  "model": "gemini-embedding-001",
+"generation_model": "gemini-3.8-flash",
+  "dimensions": 768,
+  "batch_size": 32,
+  "normalize": true
+}

@@ -1,0 +1,15 @@
+{
+  "collection_name": "banking_complaints",
+  "embedding_model": "gemini-embedding-001",
+  "expected_dimensions": 768,
+  "expected_count": 224,
+  "actual_count": 224,
+  "missing_ids": [],
+  "unexpected_ids": [],
+  "duplicate_ids": [],
+  "missing_source_ids": [],
+  "invalid_dimensions": [],
+  "missing_documents": [],
+  "metadata_records_checked": 224,
+  "validation_passed": true
+}
