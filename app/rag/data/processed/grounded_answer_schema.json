@@ -1,0 +1,57 @@
+
+{
+  "type": "object",
+  "required": [
+    "answer",
+    "supported",
+    "confidence",
+    "citations",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "answer": {
+      "type": "string"
+    },
+    "supported": {
+      "type": "boolean"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "title",
+          "section",
+          "version"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "section": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

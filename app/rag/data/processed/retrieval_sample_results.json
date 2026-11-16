@@ -1,0 +1,298 @@
+{
+    "generated_at": "2026-11-13T04:30:37.515438+00:00",
+    "service": "RetrievalService",
+    "embedding_model": "gemini-embedding-001",
+    "embedding_dimensions": 768,
+    "results": [
+        {
+            "case_id": "RET-001",
+            "query": "What cases need immediate escalation?",
+            "filters": {
+                "access_label": "Restricted"
+            },
+            "expected_source_ids": [
+                "KB-002"
+            ],
+            "retrieved_source_ids": [
+                "KB-002",
+                "KB-002",
+                "KB-002",
+                "KB-002",
+                "KB-002"
+            ],
+            "expected_source_found": true,
+            "result_count": 5,
+            "retrieved_results": [
+                {
+                    "text": "This standard defines when a complaint remains with an analyst, when supervisor approval is required, and when specialist or senior escalation is mandatory. It separates the amount or impact described by a customer from a proposed bank action. Mentioning a large disputed transaction does not itself authorize compensation, closure or account action.",
+                    "score": 0.719201922416687,
+                    "original_score": 0.719201922416687,
+                    "distance": 0.280798077583313,
+                    "rerank_score": 0.02631578947368421,
+                    "rerank_rank": 1,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "chunk_index": 1,
+                        "sequence": 3,
+                        "version": "2.1",
+                        "title": "Escalation, Approval and Decision Authority Standard",
+                        "document_type": "Policy",
+                        "parent_chunk_id": "KB-002#1-purpose#0003",
+                        "effective_date": 20260215,
+                        "status": "Approved",
+                        "section_title": "1. Purpose",
+                        "access_label": "Restricted",
+                        "checksum": "52a66eee564bda94406fef3d15b75dff3bc803396d20a642feec5bd26553d4fb",
+                        "source_id": "KB-002",
+                        "chunking_strategy": "structure_aware",
+                        "relative_path": "01_Current_Approved_Policies/KB-002_Escalation_Approval_and_Decision_Authority_Standard.docx"
+                    }
+                },
+                {
+                    "text": "adding senior escalation.\nAnalyst proposes CAD 10,000.01\nSupervisor plus senior escalation.\nUsing only one approval.\nCustomer threatens regulator and asks for CAD 50\nCompliance route applies despite low amount.\nUsing amount as sole escalation factor.\nOld approval for CAD 500; proposal changed to CAD 1,500\nNew supervisor approval required.\nReusing stale approval.",
+                    "score": 0.7071376442909241,
+                    "original_score": 0.7071376442909241,
+                    "distance": 0.2928623557090759,
+                    "rerank_score": 0.024390243902439025,
+                    "rerank_rank": 2,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "version": "2.1",
+                        "source_id": "KB-002",
+                        "parent_chunk_id": "KB-002#7-boundary-examples#0009",
+                        "effective_date": 20260215,
+                        "document_type": "Policy",
+                        "checksum": "52a66eee564bda94406fef3d15b75dff3bc803396d20a642feec5bd26553d4fb",
+                        "section_title": "7. Boundary Examples",
+                        "title": "Escalation, Approval and Decision Authority Standard",
+                        "chunking_strategy": "structure_aware",
+                        "relative_path": "01_Current_Approved_Policies/KB-002_Escalation_Approval_and_Decision_Authority_Standard.docx",
+                        "access_label": "Restricted",
+                        "chunk_index": 2,
+                        "status": "Approved",
+                        "sequence": 9
+                    }
+                },
+                {
+                    "text": "nding Approval state.\nAbove CAD 10,000.00\nSupervisor approval plus senior escalation.\nExpanded rationale, risk and specialist input where applicable.\nNo action until required decisions recorded.\nAmount missing or uncertain\nClarification or human review.\nMissing-information note.\nNo estimated amount.\nPolicy exception requested\nAuthorized policy-owner/supervisor review irrespective of amount.\nException rationale and risks.\nExplicit exception route.",
+                    "score": 0.7148914337158203,
+                    "original_score": 0.7148914337158203,
+                    "distance": 0.2851085662841797,
+                    "rerank_score": 0.022222222222222223,
+                    "rerank_rank": 3,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "parent_chunk_id": "KB-002#3-financial-redress-thresholds#0005",
+                        "status": "Approved",
+                        "document_type": "Policy",
+                        "chunk_index": 2,
+                        "chunking_strategy": "structure_aware",
+                        "version": "2.1",
+                        "relative_path": "01_Current_Approved_Policies/KB-002_Escalation_Approval_and_Decision_Authority_Standard.docx",
+                        "checksum": "52a66eee564bda94406fef3d15b75dff3bc803396d20a642feec5bd26553d4fb",
+                        "section_title": "3. Financial Redress Thresholds",
+                        "access_label": "Restricted",
+                        "source_id": "KB-002",
+                        "sequence": 5,
+                        "title": "Escalation, Approval and Decision Authority Standard",
+                        "effective_date": 20260215
+                    }
+                },
+                {
+                    "text": "Trigger\nSpecialist route\nImmediate constraints\nEvidence to capture\nUnauthorized transaction, stolen card, identity compromise\nFraud specialist\nDo not promise reimbursement or disclose sensitive fraud logic.\nTransaction identifiers, dates, amount, channel and customer statement.\nPossible personal-data exposure\nPrivacy / compliance reviewer\nLimit disclosure and preserve incident evidence.\nInformation involved, discovery time, recipients and actions taken.\nLegal notice or litigation threat\nLegal /",
+                    "score": 0.7263687252998352,
+                    "original_score": 0.7263687252998352,
+                    "distance": 0.2736312747001648,
+                    "rerank_score": 0.0196078431372549,
+                    "rerank_rank": 4,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "relative_path": "01_Current_Approved_Policies/KB-002_Escalation_Approval_and_Decision_Authority_Standard.docx",
+                        "access_label": "Restricted",
+                        "sequence": 6,
+                        "parent_chunk_id": "KB-002#4-specialist-escalation-triggers#0006",
+                        "effective_date": 20260215,
+                        "section_title": "4. Specialist Escalation Triggers",
+                        "chunk_index": 1,
+                        "checksum": "52a66eee564bda94406fef3d15b75dff3bc803396d20a642feec5bd26553d4fb",
+                        "document_type": "Policy",
+                        "title": "Escalation, Approval and Decision Authority Standard",
+                        "version": "2.1",
+                        "status": "Approved",
+                        "source_id": "KB-002",
+                        "chunking_strategy": "structure_aware"
+                    }
+                },
+                {
+                    "text": "• Approve: records scope and authorized parameters.\n• Reject: records reason and returns case for revision or alternative handling.\n• Request more information: records missing evidence and leaves action disabled.\n• Escalate: routes to a higher or specialist authority while preserving prior review.\n• No response: remains pending; the system does not assume approval.",
+                    "score": 0.6887009143829346,
+                    "original_score": 0.6887009143829346,
+                    "distance": 0.31129908561706543,
+                    "rerank_score": 0.0,
+                    "rerank_rank": 5,
+                    "keyword_overlap": 0,
+                    "metadata": {
+                        "document_type": "Policy",
+                        "chunk_index": 1,
+                        "parent_chunk_id": "KB-002#6-approval-decisions#0008",
+                        "effective_date": 20260215,
+                        "status": "Approved",
+                        "title": "Escalation, Approval and Decision Authority Standard",
+                        "sequence": 8,
+                        "source_id": "KB-002",
+                        "version": "2.1",
+                        "checksum": "52a66eee564bda94406fef3d15b75dff3bc803396d20a642feec5bd26553d4fb",
+                        "chunking_strategy": "structure_aware",
+                        "relative_path": "01_Current_Approved_Policies/KB-002_Escalation_Approval_and_Decision_Authority_Standard.docx",
+                        "section_title": "6. Approval Decisions",
+                        "access_label": "Restricted"
+                    }
+                }
+            ]
+        },
+        {
+            "case_id": "RET-002",
+            "query": "How should a disputed fee be investigated?",
+            "filters": {},
+            "expected_source_ids": [
+                "KB-003"
+            ],
+            "retrieved_source_ids": [
+                "KB-003",
+                "KB-003",
+                "KB-003",
+                "KB-003",
+                "KB-003"
+            ],
+            "expected_source_found": true,
+            "result_count": 5,
+            "retrieved_results": [
+                {
+                    "text": "• Valid disclosed fee applied as designed.\n• Duplicate or repeated fee.\n• Incorrect product or account configuration.\n• Fee triggered by customer/account event.\n• Service error or delayed correction.\n• Outdated or unclear communication.\n• Insufficient evidence requiring clarification.",
+                    "score": 0.7752638459205627,
+                    "original_score": 0.7752638459205627,
+                    "distance": 0.22473615407943726,
+                    "rerank_score": 0.03333333333333333,
+                    "rerank_rank": 1,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "effective_date": 20260301,
+                        "access_label": "Internal",
+                        "checksum": "b3f3116e19472cee943cb0f5629b314b549c03be1b4b9bad19393434812b8554",
+                        "status": "Approved",
+                        "source_id": "KB-003",
+                        "document_type": "Playbook",
+                        "chunking_strategy": "structure_aware",
+                        "title": "Fee, Charge and Interest Complaint Playbook",
+                        "chunk_index": 1,
+                        "parent_chunk_id": "KB-003#4-common-root-causes#0006",
+                        "sequence": 6,
+                        "relative_path": "02_Operational_Playbooks/KB-003_Fee_Charge_and_Interest_Complaint_Playbook.docx",
+                        "section_title": "4. Common Root Causes",
+                        "version": "2"
+                    }
+                },
+                {
+                    "text": "• Fee type or best available description.\n• Amount and currency when explicitly provided.\n• Posting, assessment or statement date.\n• Affected product/account reference if available.\n• Channel and prior contacts.\n• Requested outcome and any accessibility/language need.",
+                    "score": 0.7415332794189453,
+                    "original_score": 0.7415332794189453,
+                    "distance": 0.2584667205810547,
+                    "rerank_score": 0.03333333333333333,
+                    "rerank_rank": 2,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "access_label": "Internal",
+                        "chunk_index": 1,
+                        "document_type": "Playbook",
+                        "title": "Fee, Charge and Interest Complaint Playbook",
+                        "relative_path": "02_Operational_Playbooks/KB-003_Fee_Charge_and_Interest_Complaint_Playbook.docx",
+                        "version": "2",
+                        "sequence": 4,
+                        "section_title": "2. Required Intake Fields",
+                        "status": "Approved",
+                        "effective_date": 20260301,
+                        "chunking_strategy": "structure_aware",
+                        "checksum": "b3f3116e19472cee943cb0f5629b314b549c03be1b4b9bad19393434812b8554",
+                        "source_id": "KB-003",
+                        "parent_chunk_id": "KB-003#2-required-intake-fields#0004"
+                    }
+                },
+                {
+                    "text": "• State the fee reviewed, date, amount and source records.\n• Cite applicable current guidance.\n• Explain whether evidence supports an error, valid charge or unresolved state.\n• Identify action, approval and next step.\n• Avoid assurances inconsistent with recorded approval.",
+                    "score": 0.7896347045898438,
+                    "original_score": 0.7896347045898438,
+                    "distance": 0.21036529541015625,
+                    "rerank_score": 0.03125,
+                    "rerank_rank": 3,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "chunk_index": 1,
+                        "title": "Fee, Charge and Interest Complaint Playbook",
+                        "checksum": "b3f3116e19472cee943cb0f5629b314b549c03be1b4b9bad19393434812b8554",
+                        "effective_date": 20260301,
+                        "relative_path": "02_Operational_Playbooks/KB-003_Fee_Charge_and_Interest_Complaint_Playbook.docx",
+                        "source_id": "KB-003",
+                        "version": "2",
+                        "status": "Approved",
+                        "chunking_strategy": "structure_aware",
+                        "document_type": "Playbook",
+                        "access_label": "Internal",
+                        "parent_chunk_id": "KB-003#6-evidence-and-communication#0008",
+                        "sequence": 8,
+                        "section_title": "6. Evidence and Communication"
+                    }
+                },
+                {
+                    "text": "• Validate identity before customer-specific retrieval.\n• Retrieve account/product and relevant transaction/fee history.\n• Identify the applicable current product terms or fee guidance.\n• Compare expected fee conditions with operational evidence.\n• Document missing evidence and do not infer product eligibility.\n• Prepare finding and options; do not promise redress.",
+                    "score": 0.7936593294143677,
+                    "original_score": 0.7936593294143677,
+                    "distance": 0.20634067058563232,
+                    "rerank_score": 0.02702702702702703,
+                    "rerank_rank": 4,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "chunking_strategy": "structure_aware",
+                        "section_title": "3. Investigation Sequence",
+                        "checksum": "b3f3116e19472cee943cb0f5629b314b549c03be1b4b9bad19393434812b8554",
+                        "sequence": 5,
+                        "chunk_index": 1,
+                        "source_id": "KB-003",
+                        "effective_date": 20260301,
+                        "access_label": "Internal",
+                        "parent_chunk_id": "KB-003#3-investigation-sequence#0005",
+                        "document_type": "Playbook",
+                        "title": "Fee, Charge and Interest Complaint Playbook",
+                        "relative_path": "02_Operational_Playbooks/KB-003_Fee_Charge_and_Interest_Complaint_Playbook.docx",
+                        "version": "2",
+                        "status": "Approved"
+                    }
+                },
+                {
+                    "text": "Known facts: Two identical monthly fees posted on the same day.\nRequired handling:\n• Retrieve fee records and product context.\n• Confirm duplication rather than assuming.\n• Prepare correction recommendation.\n• Apply approvals if additional compensation proposed.\nExpected outcome: Evidence-backed recommendation with citations.\nApplicable controls: BR-006, BR-008, BR-023",
+                    "score": 0.7560272216796875,
+                    "original_score": 0.7560272216796875,
+                    "distance": 0.2439727783203125,
+                    "rerank_score": 0.022222222222222223,
+                    "rerank_rank": 5,
+                    "keyword_overlap": 1,
+                    "metadata": {
+                        "section_title": "FEE-01 — Duplicate monthly fee",
+                        "chunking_strategy": "structure_aware",
+                        "document_type": "Playbook",
+                        "effective_date": 20260301,
+                        "chunk_index": 1,
+                        "parent_chunk_id": "KB-003#fee-01-duplicate-monthly-fee#0010",
+                        "checksum": "b3f3116e19472cee943cb0f5629b314b549c03be1b4b9bad19393434812b8554",
+                        "title": "Fee, Charge and Interest Complaint Playbook",
+                        "access_label": "Internal",
+                        "relative_path": "02_Operational_Playbooks/KB-003_Fee_Charge_and_Interest_Complaint_Playbook.docx",
+                        "sequence": 10,
+                        "source_id": "KB-003",
+                        "version": "2",
+                        "status": "Approved"
+                    }
+                }
+            ]
+        }
+    ]
+}

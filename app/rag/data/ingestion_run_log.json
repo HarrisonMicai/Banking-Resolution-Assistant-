@@ -1,0 +1,29 @@
+{
+  "run_started_at": "2026-11-11T22:51:02.570408+00:00",
+  "run_completed_at": "2026-11-11T22:51:05.779539+00:00",
+  "counts": {
+    "accepted": 13,
+    "accepted_records": 179,
+    "rejected": 0,
+    "warnings": 1
+  },
+  "accepted": [
+    "KB-001",
+    "KB-002",
+    "KB-003",
+    "KB-004",
+    "KB-005",
+    "KB-006",
+    "KB-007",
+    "KB-008",
+    "KB-009",
+    "KB-010",
+    "BUL-2026-01",
+    "BUL-2026-02",
+    "KB-001-OLD"
+  ],
+  "rejected": [],
+  "warnings": [
+    "KB-001-OLD is marked Superseded and should not be used as current policy evidence."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+    "summary": {
+        "started_at": "2026-11-12T07:56:06.212785+00:00",
+        "completed_at": "2026-11-12T07:56:09.584166+00:00",
+        "manifest_records": 13,
+        "accepted_records": 192,
+        "rejected_records": 0,
+        "warnings": [],
+        "status": "completed"
+    },
+    "rejected_documents": []
+}
